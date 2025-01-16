@@ -13,7 +13,7 @@ st.markdown("This dashboard compares manual and algorithmic heater regulation.")
 
 # File paths
 manual_file_url = 'data/Cleaned_Manual_Regulation_Final_Two_Days.xlsx'
-auto_file_url = '/mnt/data/Automatic_Regulation.xlsx'
+auto_file_url = 'data/test with automatic heater regulation.xlsx'
 
 try:
     # Read the data
@@ -88,5 +88,6 @@ except FileNotFoundError as e:
     st.error(f"Error: {e}. Please ensure the data files are in the correct directory.")
 except Exception as e:
     st.error(f"An unexpected error occurred: {e}")
+
 
 
