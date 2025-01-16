@@ -29,22 +29,18 @@ try:
 
     manual_data["Day"] = manual_data["Day"].fillna(method="ffill")
 
-    # Process automatic data with multiple days
-    auto_data_combined = []
-    for sheet_name, sheet_data in auto_data.items():
-        sheet_data = sheet_data.rename(columns=lambda x: x.strip())
-        if "RMS Current (A)" not in sheet_data.columns:
-            st.warning(f"Skipping sheet '{sheet_name}' due to missing 'RMS Current (A)' column.")
-            continue
+    # Extract sheet with (2) in its name for automatic data
+    target_sheet = [sheet_name for sheet_name in auto_data.keys() if "(2)" in sheet_name]
+    if not target_sheet:
+        raise ValueError("No sheet with '(2)' found in the automatic regulation dataset.")
 
-        # Add day label based on the sheet name
-        sheet_data["Day"] = sheet_name
-        auto_data_combined.append(sheet_data)
+    auto_data = auto_data[target_sheet[0]]
+    auto_data = auto_data.rename(columns=lambda x: x.strip())
 
-    if not auto_data_combined:
-        raise ValueError("No valid sheets found in the automatic regulation data.")
+    if "RMS Current (A)" not in auto_data.columns:
+        raise KeyError("'RMS Current (A)' column not found in the selected sheet.")
 
-    auto_data = pd.concat(auto_data_combined, ignore_index=True)
+    auto_data["Day"] = "Day 2"  # Assuming all data in the selected sheet belongs to Day 2
 
     # Energy calculation
     voltage = 220
@@ -112,6 +108,5 @@ except KeyError as e:
     st.error(f"Error: {e}. Please ensure the required columns are present in the data.")
 except Exception as e:
     st.error(f"An unexpected error occurred: {e}")
-
 
 
