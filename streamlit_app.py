@@ -23,23 +23,29 @@ try:
     manual_data = pd.read_excel(manual_file_url)
     auto_data = pd.read_excel(auto_file_url)
 
-    # Verify and rename columns
-    if 'RMS Current (A)' not in auto_data.columns:
-        raise KeyError("'RMS Current (A)' column not found in automatic regulation data.")
-
+    # Dynamically identify the correct columns
     if 'Current (A)' not in manual_data.columns:
         raise KeyError("'Current (A)' column not found in manual regulation data.")
+
+    auto_current_col = None
+    for col in auto_data.columns:
+        if "RMS Current" in col or "Current" in col:
+            auto_current_col = col
+            break
+
+    if not auto_current_col:
+        raise KeyError("No suitable 'RMS Current (A)' or similar column found in automatic regulation data.")
 
     # Energy calculation
     voltage = 220
     manual_data["Energy (Wh)"] = manual_data["Current (A)"] * voltage * (5 / 3600)
-    auto_data["Energy (Wh)"] = auto_data["RMS Current (A)"] * voltage * (5 / 3600)
+    auto_data["Energy (Wh)"] = auto_data[auto_current_col] * voltage * (5 / 3600)
 
     manual_total_energy = manual_data["Energy (Wh)"].sum()
     auto_total_energy = auto_data["Energy (Wh)"].sum()
 
     manual_on_time = manual_data[manual_data["Current (A)"] > 0].shape[0] * 5 / 60  # Minutes
-    auto_on_time = auto_data[auto_data["RMS Current (A)"] > 0].shape[0] * 5 / 60  # Minutes
+    auto_on_time = auto_data[auto_data[auto_current_col] > 0].shape[0] * 5 / 60  # Minutes
 
     # Layout: Metrics
     st.markdown("### Key Metrics")
