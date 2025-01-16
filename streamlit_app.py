@@ -21,37 +21,25 @@ auto_file_url = 'data/test with automatic heater regulation.xlsx'
 try:
     # Read the data
     manual_data = pd.read_excel(manual_file_url)
-    auto_data = pd.read_excel(auto_file_url, sheet_name=None)  # Load all sheets
+    auto_data = pd.read_excel(auto_file_url)
 
-    # Process manual data
-    if 'Current (A)' not in manual_data.columns:
-        raise KeyError("'Current (A)' column not found in manual regulation data.")
+    # Process manual and automatic data
+    if 'Current' not in manual_data.columns or 'Current' not in auto_data.columns:
+        raise KeyError("'Current' column not found in one or both datasets.")
 
     manual_data["Day"] = manual_data["Day"].fillna(method="ffill")
-
-    # Extract sheet with (2) in its name for automatic data
-    target_sheet = [sheet_name for sheet_name in auto_data.keys() if "(2)" in sheet_name]
-    if not target_sheet:
-        raise ValueError("No sheet with '(2)' found in the automatic regulation dataset.")
-
-    auto_data = auto_data[target_sheet[0]]
-    auto_data = auto_data.rename(columns=lambda x: x.strip())
-
-    if "RMS Current (A)" not in auto_data.columns:
-        raise KeyError("'RMS Current (A)' column not found in the selected sheet.")
-
-    auto_data["Day"] = "Day 2"  # Assuming all data in the selected sheet belongs to Day 2
+    auto_data["Day"] = auto_data["Day"].fillna(method="ffill")
 
     # Energy calculation
     voltage = 220
-    manual_data["Energy (Wh)"] = manual_data["Current (A)"] * voltage * (5 / 3600)
-    auto_data["Energy (Wh)"] = auto_data["RMS Current (A)"] * voltage * (5 / 3600)
+    manual_data["Energy (Wh)"] = manual_data["Current"] * voltage * (5 / 3600)
+    auto_data["Energy (Wh)"] = auto_data["Current"] * voltage * (5 / 3600)
 
     manual_total_energy = manual_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
     auto_total_energy = auto_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
 
-    manual_on_time = manual_data[manual_data["Current (A)"] > 0].groupby("Day").size() * 5 / 60  # Minutes
-    auto_on_time = auto_data[auto_data["RMS Current (A)"] > 0].groupby("Day").size() * 5 / 60  # Minutes
+    manual_on_time = manual_data[manual_data["Current"] > 0].groupby("Day").size() * 5 / 60  # Minutes
+    auto_on_time = auto_data[auto_data["Current"] > 0].groupby("Day").size() * 5 / 60  # Minutes
 
     # Layout: Metrics
     st.markdown("### Key Metrics")
