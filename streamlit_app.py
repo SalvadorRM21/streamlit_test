@@ -24,21 +24,21 @@ try:
     auto_data = pd.read_excel(auto_file_url)
 
     # Process manual and automatic data
-    if 'Current' not in manual_data.columns or 'Current' not in auto_data.columns:
-        raise KeyError("'Current' column not found in one or both datasets.")
+    if 'Current (A)' not in manual_data.columns or 'Current' not in auto_data.columns:
+        raise KeyError("'Current (A)' column not found in manual dataset or 'Current' column not found in automatic dataset.")
 
     manual_data["Day"] = manual_data["Day"].fillna(method="ffill")
     auto_data["Day"] = auto_data["Day"].fillna(method="ffill")
 
     # Energy calculation
     voltage = 220
-    manual_data["Energy (Wh)"] = manual_data["Current"] * voltage * (5 / 3600)
+    manual_data["Energy (Wh)"] = manual_data["Current (A)"] * voltage * (5 / 3600)
     auto_data["Energy (Wh)"] = auto_data["Current"] * voltage * (5 / 3600)
 
     manual_total_energy = manual_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
     auto_total_energy = auto_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
 
-    manual_on_time = manual_data[manual_data["Current"] > 0].groupby("Day").size() * 5 / 60  # Minutes
+    manual_on_time = manual_data[manual_data["Current (A)"] > 0].groupby("Day").size() * 5 / 60  # Minutes
     auto_on_time = auto_data[auto_data["Current"] > 0].groupby("Day").size() * 5 / 60  # Minutes
 
     # Layout: Metrics
@@ -96,5 +96,6 @@ except KeyError as e:
     st.error(f"Error: {e}. Please ensure the required columns are present in the data.")
 except Exception as e:
     st.error(f"An unexpected error occurred: {e}")
+
 
 
