@@ -23,6 +23,13 @@ try:
     manual_data = pd.read_excel(manual_file_url)
     auto_data = pd.read_excel(auto_file_url)
 
+    # Verify and rename columns
+    if 'RMS Current (A)' not in auto_data.columns:
+        raise KeyError("'RMS Current (A)' column not found in automatic regulation data.")
+
+    if 'Current (A)' not in manual_data.columns:
+        raise KeyError("'Current (A)' column not found in manual regulation data.")
+
     # Energy calculation
     voltage = 220
     manual_data["Energy (Wh)"] = manual_data["Current (A)"] * voltage * (5 / 3600)
@@ -82,10 +89,10 @@ try:
 
 except FileNotFoundError as e:
     st.error(f"Error: {e}. Please ensure the data files are in the correct directory.")
+except KeyError as e:
+    st.error(f"Error: {e}. Please ensure the required columns are present in the data.")
 except Exception as e:
     st.error(f"An unexpected error occurred: {e}")
-
-
 
 
 
