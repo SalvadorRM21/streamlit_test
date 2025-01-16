@@ -5,3 +5,4 @@ plost
 requests
 matplotlib
 seaborn
+plotly
