@@ -23,6 +23,16 @@ try:
     manual_data = pd.read_excel(manual_file_url, header=0, usecols=[1, 2], names=["Current (A)", "Temperature (°C)"])
     auto_data = pd.read_excel(auto_file_url, header=6, usecols=[3, 4], names=["Current", "Temperature (°C)"])
 
+    # Ensure numeric data
+    manual_data["Current (A)"] = pd.to_numeric(manual_data["Current (A)"], errors="coerce")
+    manual_data["Temperature (°C)"] = pd.to_numeric(manual_data["Temperature (°C)"], errors="coerce")
+    auto_data["Current"] = pd.to_numeric(auto_data["Current"], errors="coerce")
+    auto_data["Temperature (°C)"] = pd.to_numeric(auto_data["Temperature (°C)"], errors="coerce")
+
+    # Drop rows with invalid data
+    manual_data = manual_data.dropna()
+    auto_data = auto_data.dropna()
+
     # Add Day column manually if missing
     manual_data["Day"] = "Day 1"  # Assuming single day for simplicity, update if multiple days exist
     auto_data["Day"] = "Day 2"  # Assuming single day for simplicity, update if multiple days exist
