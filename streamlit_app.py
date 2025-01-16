@@ -11,15 +11,14 @@ st.set_page_config(layout="wide", page_title="Heater Regulation Dashboard")
 st.title("Heater Regulation Dashboard")
 st.markdown("This dashboard compares manual and algorithmic heater regulation.")
 
-# Load data
-# Upload files
-manual_file = st.file_uploader("Upload Manual Regulation Data", type=["xlsx"])
-auto_file = st.file_uploader("Upload Automatic Regulation Data", type=["xlsx"])
+# File paths
+manual_file_url = 'data/Cleaned_Manual_Regulation_Final_Two_Days.xlsx'
+auto_file_url = '/mnt/data/Automatic_Regulation.xlsx'
 
-if manual_file and auto_file:
+try:
     # Read the data
-    manual_data = pd.read_excel(manual_file)
-    auto_data = pd.read_excel(auto_file)
+    manual_data = pd.read_excel(manual_file_url)
+    auto_data = pd.read_excel(auto_file_url)
 
     # Preprocessing
     st.subheader("Data Previews")
@@ -85,5 +84,8 @@ if manual_file and auto_file:
     plt.legend()
     st.pyplot(fig_temp)
 
-else:
-    st.info("Please upload both manual and automatic regulation data to proceed.")
+except FileNotFoundError as e:
+    st.error(f"Error: {e}. Please ensure the data files are in the correct directory.")
+except Exception as e:
+    st.error(f"An unexpected error occurred: {e}")
+
