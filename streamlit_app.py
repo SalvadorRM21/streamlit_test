@@ -6,6 +6,10 @@ import plotly.graph_objects as go
 # Page settings
 st.set_page_config(layout="wide", page_title="Heater Regulation Dashboard")
 
+# Apply custom style
+with open("style.css", "r") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 # Title
 st.title("Heater Regulation Dashboard")
 st.markdown("### Compare manual and algorithmic heater regulation with interactive visualizations.")
@@ -32,11 +36,13 @@ try:
 
     # Layout: Metrics
     st.markdown("### Key Metrics")
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Manual Energy (Wh)", f"{manual_total_energy:.2f}")
-    col2.metric("Auto Energy (Wh)", f"{auto_total_energy:.2f}")
-    col3.metric("Manual On-Time (min)", f"{manual_on_time:.2f}")
-    col4.metric("Auto On-Time (min)", f"{auto_on_time:.2f}")
+    metric_container = st.container()
+    with metric_container:
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Manual Energy (Wh)", f"{manual_total_energy:.2f}")
+        col2.metric("Auto Energy (Wh)", f"{auto_total_energy:.2f}")
+        col3.metric("Manual On-Time (min)", f"{manual_on_time:.2f}")
+        col4.metric("Auto On-Time (min)", f"{auto_on_time:.2f}")
 
     # Layout: Charts
     st.markdown("### Energy Consumption Comparison")
@@ -66,10 +72,19 @@ try:
                            legend=dict(orientation="h"))
     st.plotly_chart(fig_temp, use_container_width=True)
 
+    # Data Previews
+    st.markdown("### Data Previews")
+    with st.expander("Manual Regulation Data"):
+        st.dataframe(manual_data.head(20))
+
+    with st.expander("Automatic Regulation Data"):
+        st.dataframe(auto_data.head(20))
+
 except FileNotFoundError as e:
     st.error(f"Error: {e}. Please ensure the data files are in the correct directory.")
 except Exception as e:
     st.error(f"An unexpected error occurred: {e}")
+
 
 
 
