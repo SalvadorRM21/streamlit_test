@@ -20,15 +20,12 @@ auto_file_url = 'data/test with automatic heater regulation.xlsx'
 
 try:
     # Read the data
-    manual_data = pd.read_excel(manual_file_url)
-    auto_data = pd.read_excel(auto_file_url)
+    manual_data = pd.read_excel(manual_file_url, header=0, usecols=[1, 2], names=["Current (A)", "Temperature (°C)"])
+    auto_data = pd.read_excel(auto_file_url, header=6, usecols=[3, 4], names=["Current", "Temperature (°C)"])
 
-    # Process manual and automatic data
-    if 'Current (A)' not in manual_data.columns or 'Current' not in auto_data.columns:
-        raise KeyError("'Current (A)' column not found in manual dataset or 'Current' column not found in automatic dataset.")
-
-    manual_data["Day"] = manual_data["Day"].fillna(method="ffill")
-    auto_data["Day"] = auto_data["Day"].fillna(method="ffill")
+    # Add Day column manually if missing
+    manual_data["Day"] = "Day 1"  # Assuming single day for simplicity, update if multiple days exist
+    auto_data["Day"] = "Day 2"  # Assuming single day for simplicity, update if multiple days exist
 
     # Energy calculation
     voltage = 220
@@ -38,8 +35,8 @@ try:
     manual_total_energy = manual_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
     auto_total_energy = auto_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
 
-    manual_on_time = manual_data[manual_data["Current (A)"] > 0].groupby("Day").size() * 5 / 60  # Minutes
-    auto_on_time = auto_data[auto_data["Current"] > 0].groupby("Day").size() * 5 / 60  # Minutes
+    manual_on_time = manual_data[manual_data["Current (A)"] > 0].shape[0] * 5 / 60  # Minutes
+    auto_on_time = auto_data[auto_data["Current"] > 0].shape[0] * 5 / 60  # Minutes
 
     # Layout: Metrics
     st.markdown("### Key Metrics")
@@ -67,7 +64,7 @@ try:
     st.markdown("### Heater On-Time Comparison")
     on_time_data = pd.DataFrame({
         "Type": ["Manual", "Automatic"],
-        "On-Time (minutes)": [manual_on_time.sum(), auto_on_time.sum()]
+        "On-Time (minutes)": [manual_on_time, auto_on_time]
     })
     fig_on_time = px.bar(on_time_data, x="Type", y="On-Time (minutes)", color="Type",
                          title="Heater On-Time (Manual vs Automatic)", text="On-Time (minutes)")
@@ -96,6 +93,5 @@ except KeyError as e:
     st.error(f"Error: {e}. Please ensure the required columns are present in the data.")
 except Exception as e:
     st.error(f"An unexpected error occurred: {e}")
-
 
 
