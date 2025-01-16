@@ -42,60 +42,65 @@ try:
     manual_data["Energy (Wh)"] = manual_data["Current (A)"] * voltage * (5 / 3600)
     auto_data["Energy (Wh)"] = auto_data["Current"] * voltage * (5 / 3600)
 
+    # Group and calculate totals
     manual_total_energy = manual_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
     auto_total_energy = auto_data.groupby("Day")["Energy (Wh)"].sum().reset_index()
 
     manual_on_time = manual_data[manual_data["Current (A)"] > 0].shape[0] * 5 / 60  # Minutes
     auto_on_time = auto_data[auto_data["Current"] > 0].shape[0] * 5 / 60  # Minutes
 
-    # Layout: Metrics
-    st.markdown("### Key Metrics")
-    for day in manual_total_energy["Day"].unique():
-        st.markdown(f"#### Metrics for {day}")
-        metric_container = st.container()
-        with metric_container:
-            col1, col2 = st.columns(2)
-            manual_energy = manual_total_energy[manual_total_energy["Day"] == day]["Energy (Wh)"].values[0]
-            auto_energy = auto_total_energy[auto_total_energy["Day"] == day]["Energy (Wh)"].values[0]
+    # Ensure data exists for metrics
+    if manual_total_energy.empty or auto_total_energy.empty:
+        st.error("One or both datasets are empty after processing. Please check the input files.")
+    else:
+        # Layout: Metrics
+        st.markdown("### Key Metrics")
+        for day in manual_total_energy["Day"].unique():
+            st.markdown(f"#### Metrics for {day}")
+            metric_container = st.container()
+            with metric_container:
+                col1, col2 = st.columns(2)
+                manual_energy = manual_total_energy[manual_total_energy["Day"] == day]["Energy (Wh)"].values[0]
+                auto_energy = auto_total_energy[auto_total_energy["Day"] == day]["Energy (Wh)"].values[0]
 
-            col1.metric(f"Manual Energy (Wh) - {day}", f"{manual_energy:.2f}")
-            col2.metric(f"Auto Energy (Wh) - {day}", f"{auto_energy:.2f}")
+                col1.metric(f"Manual Energy (Wh) - {day}", f"{manual_energy:.2f}")
+                col2.metric(f"Auto Energy (Wh) - {day}", f"{auto_energy:.2f}")
 
-    # Layout: Charts
-    st.markdown("### Energy Consumption Comparison")
-    energy_data = pd.concat([
-        manual_total_energy.rename(columns={"Energy (Wh)": "Total Energy (Wh)", "Day": "Type"}),
-        auto_total_energy.rename(columns={"Energy (Wh)": "Total Energy (Wh)", "Day": "Type"})
-    ])
-    fig_energy = px.bar(energy_data, x="Type", y="Total Energy (Wh)", color="Type",
-                        title="Energy Consumption (Manual vs Automatic)", text="Total Energy (Wh)")
-    st.plotly_chart(fig_energy, use_container_width=True)
+        # Layout: Charts
+        st.markdown("### Energy Consumption Comparison")
+        energy_data = pd.concat([
+            manual_total_energy.rename(columns={"Energy (Wh)": "Total Energy (Wh)", "Day": "Type"}),
+            auto_total_energy.rename(columns={"Energy (Wh)": "Total Energy (Wh)", "Day": "Type"})
+        ])
+        fig_energy = px.bar(energy_data, x="Type", y="Total Energy (Wh)", color="Type",
+                            title="Energy Consumption (Manual vs Automatic)", text="Total Energy (Wh)")
+        st.plotly_chart(fig_energy, use_container_width=True)
 
-    st.markdown("### Heater On-Time Comparison")
-    on_time_data = pd.DataFrame({
-        "Type": ["Manual", "Automatic"],
-        "On-Time (minutes)": [manual_on_time, auto_on_time]
-    })
-    fig_on_time = px.bar(on_time_data, x="Type", y="On-Time (minutes)", color="Type",
-                         title="Heater On-Time (Manual vs Automatic)", text="On-Time (minutes)")
-    st.plotly_chart(fig_on_time, use_container_width=True)
+        st.markdown("### Heater On-Time Comparison")
+        on_time_data = pd.DataFrame({
+            "Type": ["Manual", "Automatic"],
+            "On-Time (minutes)": [manual_on_time, auto_on_time]
+        })
+        fig_on_time = px.bar(on_time_data, x="Type", y="On-Time (minutes)", color="Type",
+                             title="Heater On-Time (Manual vs Automatic)", text="On-Time (minutes)")
+        st.plotly_chart(fig_on_time, use_container_width=True)
 
-    st.markdown("### Temperature Over Time")
-    fig_temp = go.Figure()
-    fig_temp.add_trace(go.Scatter(y=manual_data["Temperature (°C)"], mode='lines', name='Manual'))
-    fig_temp.add_trace(go.Scatter(y=auto_data["Temperature (°C)"], mode='lines', name='Automatic'))
-    fig_temp.update_layout(title="Temperature Comparison (Manual vs Automatic)",
-                           xaxis_title="Time", yaxis_title="Temperature (°C)",
-                           legend=dict(orientation="h"))
-    st.plotly_chart(fig_temp, use_container_width=True)
+        st.markdown("### Temperature Over Time")
+        fig_temp = go.Figure()
+        fig_temp.add_trace(go.Scatter(y=manual_data["Temperature (°C)"], mode='lines', name='Manual'))
+        fig_temp.add_trace(go.Scatter(y=auto_data["Temperature (°C)"], mode='lines', name='Automatic'))
+        fig_temp.update_layout(title="Temperature Comparison (Manual vs Automatic)",
+                               xaxis_title="Time", yaxis_title="Temperature (°C)",
+                               legend=dict(orientation="h"))
+        st.plotly_chart(fig_temp, use_container_width=True)
 
-    # Data Previews
-    st.markdown("### Data Previews")
-    with st.expander("Manual Regulation Data"):
-        st.dataframe(manual_data.head(20))
+        # Data Previews
+        st.markdown("### Data Previews")
+        with st.expander("Manual Regulation Data"):
+            st.dataframe(manual_data.head(20))
 
-    with st.expander("Automatic Regulation Data"):
-        st.dataframe(auto_data.head(20))
+        with st.expander("Automatic Regulation Data"):
+            st.dataframe(auto_data.head(20))
 
 except FileNotFoundError as e:
     st.error(f"Error: {e}. Please ensure the data files are in the correct directory.")
@@ -103,5 +108,6 @@ except KeyError as e:
     st.error(f"Error: {e}. Please ensure the required columns are present in the data.")
 except Exception as e:
     st.error(f"An unexpected error occurred: {e}")
+
 
 
