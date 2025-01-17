@@ -75,6 +75,29 @@ def fetch_electricity_price(date):
         return round(pvpc, 4)
     return "N/A"
 
+# Load Excel data
+def load_excel_data(file_path):
+    return pd.read_excel(file_path)
+
+# Plot temperature, state, and current
+def plot_temp_state_current(df, title):
+    fig, ax1 = plt.subplots(figsize=(6, 3))
+
+    ax1.set_title(title)
+    ax1.set_xlabel("Time")
+    ax1.set_ylabel("Temperature (°C)", color="blue")
+    ax1.plot(df["Time"], df["Temperature"], color="blue", label="Temperature")
+    ax1.tick_params(axis="y", labelcolor="blue")
+
+    ax2 = ax1.twinx()
+    ax2.set_ylabel("State / Current", color="green")
+    ax2.plot(df["Time"], df["State"], color="green", linestyle="--", label="State")
+    ax2.plot(df["Time"], df["Current"], color="orange", label="Current")
+    ax2.tick_params(axis="y", labelcolor="green")
+
+    fig.tight_layout()
+    return fig
+
 st.title("ThermoScope")
 
 try:
@@ -96,7 +119,14 @@ try:
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
     df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
 
-    # Create two side-by-side columns for the plots
+    # Load and process data from Excel files
+    manual_file = "data/Befre algrtihme - Manual regulation.xlsx"
+    auto_file = "data/test with automatic heater regulation.xlsx"
+
+    manual_data = load_excel_data(manual_file)
+    auto_data = load_excel_data(auto_file)
+
+    # Create two side-by-side columns for the temperature plots
     col1, col2 = st.columns(2)
 
     with col1:
@@ -124,6 +154,23 @@ try:
         plt.xticks(rotation=45)
         st.pyplot(fig_8)
         st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
+
+    # Add a horizontal divider
+    st.markdown("---")
+    st.subheader("Room Temperature, State, and Current")
+
+    # Create two side-by-side columns for the new plots
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.header("Manual Regulation")
+        fig_manual = plot_temp_state_current(manual_data, "Manual Regulation")
+        st.pyplot(fig_manual)
+
+    with col4:
+        st.header("Automatic Regulation")
+        fig_auto = plot_temp_state_current(auto_data, "Automatic Regulation")
+        st.pyplot(fig_auto)
 
     # Display current temperature, today's electricity price, and time
     st.sidebar.header("Today's Info")
