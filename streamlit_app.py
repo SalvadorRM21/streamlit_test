@@ -13,11 +13,11 @@ st.markdown(
     """
     <style>
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(to bottom right, #FF4500, #1E90FF); /* Sunset gradient */
-        color: white; /* Ensure text is visible */
+        background: linear-gradient(to bottom right, #FF4500, #1E90FF);
+        color: white;
     }
     [data-testid="stSidebar"] {
-        background: rgba(0, 0, 0, 0.5); /* Transparent sidebar for better contrast */
+        background: rgba(0, 0, 0, 0.5);
     }
     </style>
     """,
@@ -44,6 +44,33 @@ data = {
     ]
 }
 
+# Hardcoded data from the user
+heater_data = {
+    "Time": [
+        "6:25:00", "6:25:45", "6:26:30", "6:27:15", "6:28:00", "6:28:45", "6:29:30", "6:30:15",
+        "6:31:00", "6:31:45", "6:32:30", "6:33:15", "6:34:00", "6:34:45", "6:35:30", "6:36:15",
+        "6:37:00", "6:37:45", "6:38:30", "6:39:15", "6:40:00", "6:40:45", "6:41:30", "6:42:15",
+        "6:43:00", "6:43:45", "6:44:30", "6:45:15", "6:46:00", "6:46:45", "6:47:30", "6:48:15",
+        "6:49:00", "6:49:45", "6:50:30", "6:51:15", "6:52:00", "6:52:45", "6:53:30", "6:54:15"
+    ],
+    "Temperature": [
+        17.00, 17.16, 16.59, 17.08, 17.16, 17.08, 17.16, 16.91, 17.48, 18.20, 17.88,
+        17.64, 17.56, 17.96, 18.20, 18.04, 18.04, 18.20, 17.96, 17.96, 18.45, 18.45,
+        18.45, 18.45, 19.01, 18.69, 19.25, 19.33, 19.49, 19.17, 19.81, 19.33, 19.41,
+        19.73, 19.65, 19.65, 19.65, 19.57, 20.22, 19.81
+    ],
+    "Current": [
+        0.00, 0.00, 0.00, 5.58, 5.53, 5.50, 5.54, 5.49, 5.49, 5.46, 5.45, 5.46, 5.45,
+        5.46, 5.44, 5.43, 5.41, 5.43, 5.42, 5.41, 5.40, 5.40, 5.40, 5.39, 5.38, 5.38,
+        5.37, 5.37, 5.38, 5.38, 5.36, 5.37, 5.37, 5.37, 5.37, 5.36, 5.36, 5.35, 5.36
+    ],
+    "Heater State": [
+        "OFF", "OFF", "OFF", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON",
+        "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON",
+        "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON", "ON"
+    ]
+}
+
 # Function to fetch electricity price for a specific date from REE API
 def fetch_electricity_price(date):
     endpoint = 'https://apidatos.ree.es'
@@ -66,55 +93,67 @@ def fetch_electricity_price(date):
         return round(pvpc, 4)
     return "N/A"
 
+# Title
 st.title("ThermoScope")
+
+# Plot Heater Operation Data
+st.header("Manual Heater Operation Data")
+fig, ax = plt.subplots()
+
+# Plot Temperature
+ax.plot(heater_data["Time"], heater_data["Temperature"], label="Temperature (°C)", color="red")
+
+# Plot Current
+ax.plot(heater_data["Time"], heater_data["Current"], label="Current (A)", color="green")
+
+# Plot Heater State
+heater_state = [1 if state == "ON" else 0 for state in heater_data["Heater State"]]
+ax.step(heater_data["Time"], heater_state, label="Heater State (ON/OFF)", color="blue", where='post')
+
+# Add labels and legend
+ax.set_title("Heater Operation")
+ax.set_xlabel("Time")
+ax.set_ylabel("Values")
+plt.xticks(rotation=45)
+ax.legend()
+
+st.pyplot(fig)
 
 # Fetch electricity prices for 7th, 8th December, and today
 price_7 = fetch_electricity_price("2024-12-07")
 price_8 = fetch_electricity_price("2024-12-08")
 today_date = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%Y-%m-%d")
 today_price = fetch_electricity_price(today_date)
-today_time = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%H:%M")
 
-# Prepare data for plotting
-hourly_temp_7 = data["2024-12-07"]
-hourly_temp_8 = data["2024-12-08"]
-df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
-df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
+# Plot data for December 7th
+st.header("7th December 2024")
+df_7 = pd.DataFrame(data["2024-12-07"], columns=["Hour", "Temperature"])
+fig_7, ax_7 = plt.subplots()
+ax_7.plot(df_7["Hour"], df_7["Temperature"], label="Temperature", color="orange")
+ax_7.set_title("Hourly Temperature on 7th December 2024")
+ax_7.set_xlabel("Hour")
+ax_7.set_ylabel("Temperature (°C)")
+plt.xticks(rotation=45)
+ax_7.legend()
+st.pyplot(fig_7)
 
-# Create two side-by-side columns for the temperature plots
-col1, col2 = st.columns(2)
-
-with col1:
-    st.header("7th December 2024")
-    fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_7.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
-    ax_7.set_xlabel("Hour")
-    ax_7.set_ylabel("Temperature (°C)")
-    ax_7.set_title("Hourly Temperatures")
-    plt.xticks(rotation=45)
-    st.pyplot(fig_7)
-    st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
-
-with col2:
-    st.header("8th December 2024")
-    fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_8.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
-    ax_8.set_xlabel("Hour")
-    ax_8.set_ylabel("Temperature (°C)")
-    ax_8.set_title("Hourly Temperatures")
-    plt.xticks(rotation=45)
-    st.pyplot(fig_8)
-    st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
+# Plot data for December 8th
+st.header("8th December 2024")
+df_8 = pd.DataFrame(data["2024-12-08"], columns=["Hour", "Temperature"])
+fig_8, ax_8 = plt.subplots()
+ax_8.plot(df_8["Hour"], df_8["Temperature"], label="Temperature", color="purple")
+ax_8.set_title("Hourly Temperature on 8th December 2024")
+ax_8.set_xlabel("Hour")
+ax_8.set_ylabel("Temperature (°C)")
+plt.xticks(rotation=45)
+ax_8.legend()
+st.pyplot(fig_8)
 
 # Display current temperature, today's electricity price, and time
 st.sidebar.header("Today's Info")
 st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
 st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real temperature if available
 st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
-st.sidebar.metric(label="Time", value=today_time)
+
 
 
