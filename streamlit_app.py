@@ -1,6 +1,5 @@
 import streamlit as st
-from datetime import datetime, timedelta, timezone
-import pytz
+from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import pandas as pd
 import requests
@@ -37,22 +36,23 @@ def fetch_current_temperature(location="Barcelona"):
     data = response.json()
     return data["current"]["temp_c"] if "current" in data else None
 
-# Function to fetch hourly temperature from AEMET OpenData
-def fetch_hourly_temperature(date, station_id="0076"):
-    url = f"https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/{date}T00:00:00UTC/fechafin/{date}T23:59:59UTC/estacion/{station_id}"
+# Function to fetch hourly temperature from Meteostat API
+def fetch_hourly_temperature(date, station_id="08430"):  # Barcelona's station ID
+    url = f"https://api.meteostat.net/v2/stations/hourly"
     headers = {
-        "Accept": "application/json",
-        "api_key": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
+        "x-api-key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82"
     }
-    response = requests.get(url, headers=headers)
+    params = {
+        "station": station_id,
+        "start": date,
+        "end": date,
+        "tz": "Europe/Madrid"
+    }
+    response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
     data = response.json()
-    if "datos" in data:
-        datos_response = requests.get(data["datos"])
-        datos_response.raise_for_status()
-        hourly_data = datos_response.json()
-        print("Hourly Data Fetched:", hourly_data)  # Print fetched data for debugging
-        return [(obs["hora"], obs["tmed"]) for obs in hourly_data if "hora" in obs and "tmed" in obs]
+    if "data" in data:
+        return [(hour["time"], hour["temp"]) for hour in data["data"] if "temp" in hour]
     return []
 
 # Function to fetch electricity price for a specific date from REE API
@@ -90,9 +90,9 @@ try:
     # Fetch electricity prices for 7th, 8th December, and today
     price_7 = fetch_electricity_price("2024-12-07")
     price_8 = fetch_electricity_price("2024-12-08")
-    today_date = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%Y-%m-%d")
+    today_date = datetime.now().strftime("%Y-%m-%d")
     today_price = fetch_electricity_price(today_date)
-    today_time = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%H:%M")
+    today_time = datetime.now().strftime("%H:%M")
 
     # Prepare data for plotting
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
@@ -108,7 +108,7 @@ try:
         ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
         ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
         ax_7.set_xlabel("Hour")
-        ax_7.set_ylabel("Temperature (°C")
+        ax_7.set_ylabel("Temperature (°C)")
         ax_7.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_7)
@@ -121,7 +121,7 @@ try:
         ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
         ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
         ax_8.set_xlabel("Hour")
-        ax_8.set_ylabel("Temperature (°C")
+        ax_8.set_ylabel("Temperature (°C)")
         ax_8.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_8)
