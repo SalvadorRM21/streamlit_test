@@ -264,6 +264,13 @@ hourly_temp_10 = data["2024-12-10"]
 df_9 = pd.DataFrame(hourly_temp_9, columns=["Hour", "Temperature", "Current"])
 df_10 = pd.DataFrame(hourly_temp_10, columns=["Hour", "Temperature", "Current"])
 
+
+# Calculate power and consumption in kWh
+df_9["Power (W)"] = df_9["Current"] * voltage
+df_9["Consumption (kWh)"] = df_9["Power (W)"] * (45 / 3600) / 1000  # 45 seconds converted to hours
+df_10["Power (W)"] = df_10["Current"] * voltage
+df_10["Consumption (kWh)"] = df_10["Power (W)"] * (45 / 3600) / 1000
+
 # Create two side-by-side columns for the temperature and current plots
 col1, col2 = st.columns(2)
 
@@ -289,6 +296,9 @@ with col1:
     ax_9.set_xticklabels(df_9["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
     st.pyplot(fig_9)
 
+  total_consumption_9 = df_9["Consumption (kWh)"].sum()
+    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_9:.2f}")
+
 with col2:
     st.header("December 10th 2024 - Turning ON/OFF remotely")
     fig_10, ax_10 = plt.subplots(figsize=(6, 3))  # Adjust height
@@ -305,6 +315,9 @@ with col2:
     ax10_current.plot(df_10["Hour"], df_10["Current"], label="Current", color="orange")
     ax10_current.set_ylabel("Current (A)", color="orange")
     ax10_current.tick_params(axis='y', labelcolor="orange")
+
+  total_consumption_10 = df_10["Consumption (kWh)"].sum()
+    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_10:.2f}")
 
     ax_10.set_title("Room Temperature and Current")
     ax_10.set_xticks(range(0, len(df_10["Hour"]), 2))  # Add spacing to the x-axis ticks
