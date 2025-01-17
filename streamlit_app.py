@@ -8,7 +8,7 @@ import pandas as pd
 def fetch_current_temperature(location="Barcelona"):
     url = "https://weatherapi-com.p.rapidapi.com/current.json"
     headers = {
-        "X-RapidAPI-Key": "6a425b2a7bmshc1f059e65b98fb7p1cdd78jsn184965114ca2",
+        "X-RapidAPI-Key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82",
         "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
     }
     params = {"q": location}
