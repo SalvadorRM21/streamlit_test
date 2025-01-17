@@ -48,7 +48,7 @@ def fetch_hourly_temperature(date, location="Barcelona"):
         return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]  # Extract only the hour
     return []
 
-# Function to fetch electricity price for a specific date
+# Function to fetch electricity price for a specific date from REE API
 def fetch_electricity_price(date):
     url = "https://api.esios.ree.es/indicators/1001"
     headers = {
@@ -72,14 +72,15 @@ try:
     temperature = fetch_current_temperature()
 
     # Fetch hourly temperatures for 7th and 8th December
-    hourly_temp_7 = fetch_hourly_temperature("2022-12-07")
-    hourly_temp_8 = fetch_hourly_temperature("2022-12-08")
+    hourly_temp_7 = fetch_hourly_temperature("2024-12-07")
+    hourly_temp_8 = fetch_hourly_temperature("2024-12-08")
 
-    # Fetch electricity prices for 7th and 8th December and yesterday
-    price_7 = fetch_electricity_price("2022-12-07")
-    price_8 = fetch_electricity_price("2022-12-08")
-    yesterday_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-    yesterday_price = fetch_electricity_price(yesterday_date)
+    # Fetch electricity prices for 7th, 8th December, and today
+    price_7 = fetch_electricity_price("2024-12-07")
+    price_8 = fetch_electricity_price("2024-12-08")
+    today_date = datetime.now().strftime("%Y-%m-%d")
+    today_price = fetch_electricity_price(today_date)
+    today_time = datetime.now().strftime("%H:%M")
 
     # Prepare data for plotting
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
@@ -114,11 +115,12 @@ try:
         st.pyplot(fig_8)
         st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
 
-    # Display current temperature and yesterday's price
+    # Display current temperature, today's electricity price, and time
     st.sidebar.header("Today's Info")
     st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
-    st.sidebar.metric(label="Yesterday's Electricity Price (€/kWh)", value=f"{yesterday_price} €")
+    st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
+    st.sidebar.metric(label="Time", value=today_time)
 
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
