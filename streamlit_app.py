@@ -1,5 +1,6 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+import pytz
 import matplotlib.pyplot as plt
 import pandas as pd
 import requests
@@ -36,24 +37,30 @@ def fetch_current_temperature(location="Barcelona"):
     data = response.json()
     return data["current"]["temp_c"] if "current" in data else None
 
-# Function to fetch hourly temperature from Meteostat API
-def fetch_hourly_temperature(date, station_id="08430"):  # Barcelona's station ID
-    url = f"https://api.meteostat.net/v2/stations/hourly"
-    headers = {
-        "x-api-key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82"
+# Function to fetch hourly temperature (using provided static data for 7th and 8th December 2024)
+def fetch_hourly_temperature(date, station_id="0076"):
+    # Static data for 7th and 8th December 2024
+    data = {
+        "2024-12-07": [
+            ("0:00", 13.44), ("1:00", 12.97), ("2:00", 12.75), ("4:00", 12.75),
+            ("5:00", 12.74), ("6:00", 13.23), ("7:00", 13.56), ("8:00", 13.6),
+            ("9:00", 13.85), ("10:00", 14.66), ("11:00", 15.32), ("12:00", 16.68),
+            ("13:00", 17.46), ("14:00", 18.09), ("15:00", 19.19), ("16:00", 18.04),
+            ("17:00", 16.52), ("18:00", 14.74), ("19:00", 13.3), ("20:00", 12.19),
+            ("21:00", 11.34), ("22:00", 10.45), ("23:00", 9.85)
+        ],
+        "2024-12-08": [
+            ("0:00", 9.24), ("1:00", 8.84), ("2:00", 8.37), ("3:00", 8.13),
+            ("4:00", 8.22), ("5:00", 7.86), ("6:00", 7.46), ("7:00", 7.45),
+            ("8:00", 7.66), ("9:00", 8.21), ("10:00", 9.24), ("11:00", 10.6),
+            ("12:00", 11.52), ("13:00", 12.33), ("14:00", 12.79), ("15:00", 12.63),
+            ("16:00", 12.4), ("17:00", 11.74), ("18:00", 11), ("19:00", 10.5),
+            ("20:00", 10.1), ("21:00", 9.27), ("22:00", 8.66), ("23:00", 8.37)
+        ]
     }
-    params = {
-        "station": station_id,
-        "start": date,
-        "end": date,
-        "tz": "Europe/Madrid"
-    }
-    response = requests.get(url, headers=headers, params=params)
-    response.raise_for_status()
-    data = response.json()
-    if "data" in data:
-        return [(hour["time"], hour["temp"]) for hour in data["data"] if "temp" in hour]
-    return []
+    # Return the data for the specified date
+    return data.get(date, [])
+
 
 # Function to fetch electricity price for a specific date from REE API
 def fetch_electricity_price(date):
@@ -90,9 +97,9 @@ try:
     # Fetch electricity prices for 7th, 8th December, and today
     price_7 = fetch_electricity_price("2024-12-07")
     price_8 = fetch_electricity_price("2024-12-08")
-    today_date = datetime.now().strftime("%Y-%m-%d")
+    today_date = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%Y-%m-%d")
     today_price = fetch_electricity_price(today_date)
-    today_time = datetime.now().strftime("%H:%M")
+    today_time = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%H:%M")
 
     # Prepare data for plotting
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
@@ -108,7 +115,7 @@ try:
         ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
         ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
         ax_7.set_xlabel("Hour")
-        ax_7.set_ylabel("Temperature (°C)")
+        ax_7.set_ylabel("Temperature (°C")
         ax_7.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_7)
@@ -121,7 +128,7 @@ try:
         ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
         ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
         ax_8.set_xlabel("Hour")
-        ax_8.set_ylabel("Temperature (°C)")
+        ax_8.set_ylabel("Temperature (°C")
         ax_8.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_8)
@@ -136,6 +143,7 @@ try:
 
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
