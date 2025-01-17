@@ -72,7 +72,7 @@ def fetch_electricity_price(date):
         return round(pvpc, 4)
     return "N/A"
 
-st.title("ThermoScope")
+
 
 # Fetch electricity prices for 7th, 8th December, and today
 price_7 = fetch_electricity_price("2024-12-07")
