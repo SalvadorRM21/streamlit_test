@@ -297,7 +297,18 @@ with col2:
     ax_10.set_xticks(range(0, len(df_10["Hour"]), 2))  # Add spacing to the x-axis ticks
     ax_10.set_xticklabels(df_10["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
     st.pyplot(fig_10)
-
+    voltage = 220  # Assumed voltage in volts
+    # Calculate power and consumption in kWh
+df_7["Power (W)"] = df_7["Current"] * voltage
+df_7["Consumption (kWh)"] = df_7["Power (W)"] * (45 / 3600) / 1000  # 45 seconds converted to hours
+df_8["Power (W)"] = df_8["Current"] * voltage
+df_8["Consumption (kWh)"] = df_8["Power (W)"] * (45 / 3600) / 1000
+# Display total consumption
+    total_consumption_7 = df_7["Consumption (kWh)"].sum()
+    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_7:.2f}")
+# Display total consumption
+    total_consumption_8 = df_8["Consumption (kWh)"].sum()
+    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_8:.2f}")
 
 
 
