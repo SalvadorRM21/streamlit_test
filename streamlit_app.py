@@ -37,20 +37,21 @@ def fetch_current_temperature(location="Barcelona"):
     data = response.json()
     return data["current"]["temp_c"] if "current" in data else None
 
-# Function to fetch hourly temperature for a specific date
-def fetch_hourly_temperature(date, location="Barcelona"):
-    url = "https://weatherapi-com.p.rapidapi.com/history.json"
+# Function to fetch hourly temperature from AEMET OpenData
+def fetch_hourly_temperature(date, station_id="0076"):
+    url = f"https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos/fechaini/{date}T00:00:00UTC/fechafin/{date}T23:59:59UTC/estacion/{station_id}"
     headers = {
-        "X-RapidAPI-Key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82",
-        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+        "Accept": "application/json",
+        "api_key": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
     }
-    params = {"q": location, "dt": date}
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers)
     response.raise_for_status()
     data = response.json()
-    if "forecast" in data and "forecastday" in data["forecast"]:
-        hourly_data = data["forecast"]["forecastday"][0]["hour"]
-        return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]
+    if "datos" in data:
+        datos_response = requests.get(data["datos"])
+        datos_response.raise_for_status()
+        hourly_data = datos_response.json()
+        return [(obs["hora"], obs["tmed"]) for obs in hourly_data if "hora" in obs and "tmed" in obs]
     return []
 
 # Function to fetch electricity price for a specific date from REE API
