@@ -26,7 +26,7 @@ def fetch_hourly_temperature(date, location="Barcelona"):
     data = get_data_from_api(url, headers=headers, params=params)
     if "forecast" in data and "forecastday" in data["forecast"]:
         hourly_data = data["forecast"]["forecastday"][0]["hour"]
-        return [(hour["time"], hour["temp_c"]) for hour in hourly_data]
+        return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]  # Extract only the hour
     return []
 
 # Streamlit app
@@ -42,28 +42,35 @@ try:
     hourly_temp_8 = fetch_hourly_temperature("2022-12-08")
 
     # Prepare data for plotting
-    df_7 = pd.DataFrame(hourly_temp_7, columns=["Time", "Temperature"])
-    df_8 = pd.DataFrame(hourly_temp_8, columns=["Time", "Temperature"])
+    df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
+    df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
 
-    # Plot temperatures
-    st.header("Hourly Temperatures for 7th and 8th December")
-    fig, ax = plt.subplots()
-    ax.plot(df_7["Time"], df_7["Temperature"], label="7th December")
-    ax.plot(df_8["Time"], df_8["Temperature"], label="8th December")
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Temperature (°C)")
-    ax.set_title("Hourly Temperatures")
-    ax.legend()
+    # Plot temperatures for 7th December
+    st.header("Hourly Temperatures for 7th December")
+    fig_7, ax_7 = plt.subplots()
+    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
+    ax_7.set_xlabel("Hour")
+    ax_7.set_ylabel("Temperature (°C)")
+    ax_7.set_title("Hourly Temperatures - 7th December")
     plt.xticks(rotation=45)
+    st.pyplot(fig_7)
 
-    # Display plot in Streamlit
-    st.pyplot(fig)
+    # Plot temperatures for 8th December
+    st.header("Hourly Temperatures for 8th December")
+    fig_8, ax_8 = plt.subplots()
+    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
+    ax_8.set_xlabel("Hour")
+    ax_8.set_ylabel("Temperature (°C)")
+    ax_8.set_title("Hourly Temperatures - 8th December")
+    plt.xticks(rotation=45)
+    st.pyplot(fig_8)
 
     # Display current temperature
     st.sidebar.header("Today's Info")
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
