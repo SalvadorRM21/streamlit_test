@@ -48,7 +48,7 @@ def fetch_hourly_temperature(date, location="Barcelona"):
         return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]  # Extract only the hour
     return []
 
-st.title("Heater Dashboard")
+st.title("*Heater´s metrics Dashboard*")
 
 try:
     # Fetch current temperature
