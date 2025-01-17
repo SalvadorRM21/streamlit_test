@@ -7,21 +7,9 @@ import requests
 
 # Streamlit app configuration
 st.set_page_config(layout="wide", page_title="ThermoScope")
-st.markdown(
-    """
-    <style>
-    .centered-title {
-        text-align: center;
-        font-style: italic;
-        font-size: 36px;
-        color: black;
-    }
-    </style>
-    <div class="centered-title">ThermoScope</div>
-    """,
-    unsafe_allow_html=True
 
 # Add custom styles for background
+# Add custom styles for background and overall design
 st.markdown(
     """
     <style>
@@ -37,6 +25,13 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# Centered title
+st.markdown(
+    """
+    <h1 style="text-align: center; color: white;">ThermoScope</h1>
+    """,
+    unsafe_allow_html=True
+)
 # Static data for 7th and 8th December 2024
 data = {
     "2024-12-07": [
