@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
-# Streamlit app configuration
-st.set_page_config(layout="wide", page_title="ThermoScope")
 
 # Add custom styles for background
 # Add custom styles for background and overall design
