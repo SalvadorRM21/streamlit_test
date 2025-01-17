@@ -158,159 +158,66 @@ data = {
         ("6:41:30", 17.24, 5.42, "ON"), ("6:42:15", 16.75, 5.41, "ON"), ("6:43:00", 17.16, 5.43, "ON"),
         ("6:43:45", 17.72, 5.42, "ON"), ("6:44:30", 17.32, 5.43, "ON"), ("6:45:15", 17.08, 5.42, "ON"),
         ("6:46:00", 17.24, 5.40, "ON"), ("6:46:45", 17.16, 5.41, "ON"), ("6:47:30", 17.16, 5.43, "ON")
+    ],
+    "2024-12-09": [
+        ("6:25:00", 16.00, 0.00, "OFF"), ("6:25:45", 16.10, 5.40, "ON"), ("6:26:30", 16.30, 5.20, "ON"),
+        ("6:27:15", 16.50, 5.10, "ON"), ("6:28:00", 16.70, 5.00, "ON"), ("6:28:45", 16.90, 4.80, "ON"),
+        ("6:29:30", 17.10, 4.70, "ON"), ("6:30:15", 17.30, 4.60, "ON"), ("6:31:00", 17.50, 4.50, "ON"),
+        ("6:31:45", 17.70, 4.40, "ON"), ("6:32:30", 17.90, 4.30, "ON"), ("6:33:15", 18.10, 4.20, "ON"),
+        ("6:34:00", 18.30, 4.10, "ON"), ("6:34:45", 18.50, 4.00, "ON"), ("6:35:30", 18.70, 3.90, "ON"),
+        ("6:36:15", 18.90, 3.80, "ON"), ("6:37:00", 19.10, 3.70, "ON"), ("6:37:45", 19.30, 3.60, "ON"),
+        ("6:38:30", 19.50, 3.50, "ON"), ("6:39:15", 19.70, 3.40, "ON"), ("6:40:00", 19.90, 3.30, "ON"),
+        ("6:40:45", 20.10, 3.20, "ON"), ("6:41:30", 20.30, 3.10, "ON"), ("6:42:15", 20.50, 3.00, "ON"),
+        ("6:43:00", 20.70, 2.90, "ON"), ("6:43:45", 20.90, 2.80, "ON"), ("6:44:30", 21.10, 2.70, "ON")
+    ],
+    "2024-12-10": [
+        ("6:25:00", 15.80, 0.00, "OFF"), ("6:25:45", 15.90, 4.80, "ON"), ("6:26:30", 16.00, 4.70, "ON"),
+        ("6:27:15", 16.20, 4.60, "ON"), ("6:28:00", 16.40, 4.50, "ON"), ("6:28:45", 16.60, 4.40, "ON"),
+        ("6:29:30", 16.80, 4.30, "ON"), ("6:30:15", 17.00, 4.20, "ON"), ("6:31:00", 17.20, 4.10, "ON"),
+        ("6:31:45", 17.40, 4.00, "ON"), ("6:32:30", 17.60, 3.90, "ON"), ("6:33:15", 17.80, 3.80, "ON"),
+        ("6:34:00", 18.00, 3.70, "ON"), ("6:34:45", 18.20, 3.60, "ON"), ("6:35:30", 18.40, 3.50, "ON"),
+        ("6:36:15", 18.60, 3.40, "ON"), ("6:37:00", 18.80, 3.30, "ON"), ("6:37:45", 19.00, 3.20, "ON"),
+        ("6:38:30", 19.20, 3.10, "ON"), ("6:39:15", 19.40, 3.00, "ON"), ("6:40:00", 19.60, 2.90, "ON"),
+        ("6:40:45", 19.80, 2.80, "ON"), ("6:41:30", 20.00, 2.70, "ON"), ("6:42:15", 20.20, 2.60, "ON"),
+        ("6:43:00", 20.40, 2.50, "ON"), ("6:43:45", 20.60, 2.40, "ON"), ("6:44:30", 20.80, 2.30, "ON")
     ]
 }
 
 # Prepare data for plotting
 hourly_temp_7 = data["2024-12-07"]
 hourly_temp_8 = data["2024-12-08"]
-
-df_7 = pd.DataFrame(hourly_temp_7, columns=["Time", "Temperature", "Current", "Heater State"])
-df_8 = pd.DataFrame(hourly_temp_8, columns=["Time", "Temperature", "Current", "Heater State"])
-
-# Calculate power and consumption in kWh
-df_7["Power (W)"] = df_7["Current"] * voltage
-df_7["Consumption (kWh)"] = df_7["Power (W)"] * (45 / 3600) / 1000  # 45 seconds converted to hours
-df_8["Power (W)"] = df_8["Current"] * voltage
-df_8["Consumption (kWh)"] = df_8["Power (W)"] * (45 / 3600) / 1000
-
-# Create two side-by-side columns for the temperature and current plots
-col1, col2 = st.columns(2)
-
-with col1:
-    st.header("7th December 2024")
-    fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_7.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_7.plot(df_7["Time"], df_7["Temperature"], label="Temperature", color="blue")
-    ax_7.set_xlabel("Time")
-    ax_7.set_ylabel("Temperature (°C)", color="blue")
-    ax_7.tick_params(axis='y', labelcolor="blue")
-
-    # Add current to the same plot with a secondary axis
-    ax7_current = ax_7.twinx()
-    ax7_current.plot(df_7["Time"], df_7["Current"], label="Current", color="orange")
-    ax7_current.set_ylabel("Current (A)", color="orange")
-    ax7_current.tick_params(axis='y', labelcolor="orange")
-
-    ax_7.set_title("Room Temperature and Current")
-    ax_7.set_xticks(range(0, len(df_7["Time"]), 5))  # Add spacing to the x-axis ticks
-    ax_7.set_xticklabels(df_7["Time"].iloc[::5], rotation=45)  # Better x-axis labels
-    st.pyplot(fig_7)
-
-    # Display total consumption
-    total_consumption_7 = df_7["Consumption (kWh)"].sum()
-    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_7:.2f}")
-
-with col2:
-    st.header("8th December 2024")
-    fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_8.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_8.plot(df_8["Time"], df_8["Temperature"], label="Temperature", color="blue")
-    ax_8.set_xlabel("Time")
-    ax_8.set_ylabel("Temperature (°C)", color="blue")
-    ax_8.tick_params(axis='y', labelcolor="blue")
-
-    # Add current to the same plot with a secondary axis
-    ax8_current = ax_8.twinx()
-    ax8_current.plot(df_8["Time"], df_8["Current"], label="Current", color="orange")
-    ax8_current.set_ylabel("Current (A)", color="orange")
-    ax8_current.tick_params(axis='y', labelcolor="orange")
-
-    ax_8.set_title("Room Temperature and Current")
-    ax_8.set_xticks(range(0, len(df_8["Time"]), 5))  # Add spacing to the x-axis ticks
-    ax_8.set_xticklabels(df_8["Time"].iloc[::5], rotation=45)  # Better x-axis labels
-    st.pyplot(fig_8)
-
-    # Display total consumption
-    total_consumption_8 = df_8["Consumption (kWh)"].sum()
-    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_8:.2f}")
-
-
-
-import pandas as pd
-import matplotlib.pyplot as plt
-import streamlit as st
-
-# Static data for plotting
-data = {
-    "2024-12-09": [
-        ("18:00", 17.2, 5.5), ("18:00:45", 17.6, 5.5), ("18:01:30", 18.1, 5.5), ("18:02:15", 18.5, 5.5),
-        ("18:03:00", 18.9, 5.5), ("18:03:45", 19.3, 0), ("18:04:30", 19.5, 0), ("18:05:15", 19.4, 0),
-        ("18:06:00", 19.2, 0), ("18:06:45", 18.9, 0), ("18:07:30", 18.5, 5.5), ("18:08:15", 18.9, 5.5),
-        ("18:09:00", 19.3, 5.5), ("18:09:45", 19.5, 0), ("18:10:30", 19.6, 0), ("18:11:15", 19.4, 0),
-        ("18:12:00", 19.1, 0), ("18:12:45", 18.8, 0), ("18:13:30", 18.5, 5.5), ("18:14:15", 18.9, 5.5),
-        ("18:15:00", 19.3, 5.5), ("18:15:45", 19.5, 0), ("18:16:30", 19.4, 0), ("18:17:15", 19.2, 0),
-        ("18:18:00", 18.9, 0), ("18:18:45", 18.5, 5.5), ("18:19:30", 18.9, 5.5), ("18:20:15", 19.3, 5.5),
-        ("18:21:00", 19.5, 0)
-    ],
-    "2024-12-10": [
-        ("18:00", 18.0, 5.5), ("18:00:45", 18.4, 5.5), ("18:01:30", 18.8, 5.5), ("18:02:15", 19.2, 5.5),
-        ("18:03:00", 19.5, 0), ("18:03:45", 19.6, 0), ("18:04:30", 19.3, 0), ("18:05:15", 19.0, 0),
-        ("18:06:00", 18.7, 0), ("18:06:45", 18.5, 5.5), ("18:07:30", 18.9, 5.5), ("18:08:15", 19.4, 5.5),
-        ("18:09:00", 19.5, 0), ("18:09:45", 19.3, 0), ("18:10:30", 19.0, 0), ("18:11:15", 18.7, 0),
-        ("18:12:00", 18.5, 5.5), ("18:12:45", 18.9, 5.5), ("18:13:30", 19.3, 5.5), ("18:14:15", 19.5, 0),
-        ("18:15:00", 19.4, 0), ("18:15:45", 19.2, 0), ("18:16:30", 18.9, 0), ("18:17:15", 18.5, 5.5),
-        ("18:18:00", 18.9, 5.5), ("18:18:45", 19.3, 5.5), ("18:19:30", 19.5, 0), ("18:20:15", 19.4, 0),
-        ("18:21:00", 19.2, 0)
-    ]
-}
-
-# Prepare data for plotting
 hourly_temp_9 = data["2024-12-09"]
 hourly_temp_10 = data["2024-12-10"]
 
-df_9 = pd.DataFrame(hourly_temp_9, columns=["Hour", "Temperature", "Current"])
-df_10 = pd.DataFrame(hourly_temp_10, columns=["Hour", "Temperature", "Current"])
+df_7 = pd.DataFrame(hourly_temp_7, columns=["Time", "Temperature", "Current", "Heater State"])
+df_8 = pd.DataFrame(hourly_temp_8, columns=["Time", "Temperature", "Current", "Heater State"])
+df_9 = pd.DataFrame(hourly_temp_9, columns=["Time", "Temperature", "Current", "Heater State"])
+df_10 = pd.DataFrame(hourly_temp_10, columns=["Time", "Temperature", "Current", "Heater State"])
+
+# Calculate power and consumption in kWh
+def calculate_consumption(df):
+    df["Power (W)"] = df["Current"] * voltage
+    df["Consumption (kWh)"] = df["Power (W)"] * (45 / 3600) / 1000
+    return df
+
+df_7 = calculate_consumption(df_7)
+df_8 = calculate_consumption(df_8)
+df_9 = calculate_consumption(df_9)
+df_10 = calculate_consumption(df_10)
 
 # Create two side-by-side columns for the temperature and current plots
-col1, col2 = st.columns(2)
+for day, df, title in zip([
+    "7th December 2024",
+    "8th December 2024",
+    "9th December 2024",
+    "10th December 2024"
+], [df_7, df_8, df_9, df_10], ["Room Temperature and Current"] * 4):
+    st.header(day)
+    fig, ax = plt.subplots(figsize=(6, 3))  # Adjust height
+    fig.patch.set_facecolor('none')  # Transparent background for the figure
+    ax.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+    ax.plot(df_8["Time"], df_10[:"room curve"][{"line.text"]
 
-with col1:
-    st.header("December 9th 2024 - Turning ON/OFF remotely")
-    fig_9, ax_9 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_9.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_9.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_9.plot(df_9["Hour"], df_9["Temperature"], label="Temperature", color="blue")
-    ax_9.set_xlabel("Hour")
-    ax_9.set_ylabel("Temperature (°C)", color="blue")
-    ax_9.tick_params(axis='y', labelcolor="blue")
-    st.metric(label="Electricity Price (€/kWh) for December 9th 2024", value=f"{price_9} €")
-
-    # Add current to the same plot with a secondary axis
-    ax9_current = ax_9.twinx()
-    ax9_current.plot(df_9["Hour"], df_9["Current"], label="Current", color="orange")
-    ax9_current.set_ylabel("Current (A)", color="orange")
-    ax9_current.tick_params(axis='y', labelcolor="orange")
-
-    ax_9.set_title("Room Temperature and Current")
-    ax_9.set_xticks(range(0, len(df_9["Hour"]), 2))  # Add spacing to the x-axis ticks
-    ax_9.set_xticklabels(df_9["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
-    st.pyplot(fig_9)
-
-with col2:
-    st.header("December 10th 2024 - Turning ON/OFF remotely")
-    fig_10, ax_10 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_10.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_10.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_10.plot(df_10["Hour"], df_10["Temperature"], label="Temperature", color="blue")
-    ax_10.set_xlabel("Hour")
-    ax_10.set_ylabel("Temperature (°C)", color="blue")
-    ax_10.tick_params(axis='y', labelcolor="blue")
-    st.metric(label="Electricity Price (€/kWh) for December 10th 2024", value=f"{price_10} €")
-
-    # Add current to the same plot with a secondary axis
-    ax10_current = ax_10.twinx()
-    ax10_current.plot(df_10["Hour"], df_10["Current"], label="Current", color="orange")
-    ax10_current.set_ylabel("Current (A)", color="orange")
-    ax10_current.tick_params(axis='y', labelcolor="orange")
-
-    ax_10.set_title("Room Temperature and Current")
-    ax_10.set_xticks(range(0, len(df_10["Hour"]), 2))  # Add spacing to the x-axis ticks
-    ax_10.set_xticklabels(df_10["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
-    st.pyplot(fig_10)
-  
 
 
 
