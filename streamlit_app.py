@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import matplotlib.pyplot as plt
 import pandas as pd
 import requests
@@ -87,9 +87,9 @@ try:
     # Fetch electricity prices for 7th, 8th December, and today
     price_7 = fetch_electricity_price("2024-12-07")
     price_8 = fetch_electricity_price("2024-12-08")
-    today_date = datetime.now().strftime("%Y-%m-%d")
+    today_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     today_price = fetch_electricity_price(today_date)
-    today_time = datetime.now().strftime("%H:%M")
+    today_time = datetime.now(timezone.utc).strftime("%H:%M")
 
     # Prepare data for plotting
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
@@ -133,7 +133,6 @@ try:
 
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
-
 
 
 
