@@ -92,7 +92,7 @@ with col1:
     ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
     ax_7.set_xlabel("Hour")
     ax_7.set_ylabel("Temperature (°C)")
-    ax_7.set_title("Hourly Temperatures")
+    ax_7.set_title("Outside Temperature")
     plt.xticks(rotation=45)
     st.pyplot(fig_7)
     st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
@@ -105,7 +105,7 @@ with col2:
     ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
     ax_8.set_xlabel("Hour")
     ax_8.set_ylabel("Temperature (°C)")
-    ax_8.set_title("Hourly Temperatures")
+    ax_8.set_title("Outside Temperature")
     plt.xticks(rotation=45)
     st.pyplot(fig_8)
     st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
@@ -156,7 +156,7 @@ df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature", "Current"])
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("7th December 2024")
+    st.header("7th December 2024 - Turning ON/OFF remotely")
     fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -177,7 +177,7 @@ with col1:
     st.pyplot(fig_7)
 
 with col2:
-    st.header("8th December 2024")
+    st.header("8th December 2024 - Turning ON/OFF remotely")
     fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
