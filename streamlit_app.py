@@ -188,7 +188,7 @@ with col2:
     fig_10, ax_10 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_10.patch.set_facecolor('none')  # Transparent background for the figure
     ax_10.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_10.plot(df_8["Hour"], df_10["Temperature"], label="Temperature", color="blue")
+    ax_10.plot(df_10["Hour"], df_10["Temperature"], label="Temperature", color="blue")
     ax_10.set_xlabel("Hour")
     ax_10.set_ylabel("Temperature (°C)", color="blue")
     ax_10.tick_params(axis='y', labelcolor="blue")
