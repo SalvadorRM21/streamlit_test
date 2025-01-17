@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Streamlit app configuration
-st.set_page_config(layout="wide", page_title="Heater Dashboard")
+st.set_page_config(layout="wide", page_title="ThermoScope")
 
 # Add custom styles for background
 st.markdown(
@@ -59,7 +59,7 @@ def fetch_electricity_price(date):
     }
     return electricity_prices.get(date, "N/A")
 
-st.title("Heater Dashboard")
+st.title("ThermoScope")
 
 try:
     # Fetch current temperature
