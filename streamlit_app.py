@@ -146,6 +146,26 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+import pandas as pd
+import matplotlib.pyplot as plt
+import streamlit as st
+
+# Centered and italicized title
+st.markdown(
+    """
+    <style>
+    .centered-title {
+        text-align: center;
+        font-style: italic;
+        font-size: 36px;
+        color: black;
+    }
+    </style>
+    <div class="centered-title">ThermoScope</div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Static data for plotting
 voltage = 220  # Assumed voltage in volts
 data = {
@@ -252,6 +272,4 @@ for day, df in zip([
     # Show total consumption
     total_consumption = df["Consumption (kWh)"].sum()
     st.metric(label=f"Total Consumption for {day} (kWh)", value=round(total_consumption, 3))
-
-
 
