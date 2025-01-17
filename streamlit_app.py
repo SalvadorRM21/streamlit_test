@@ -76,9 +76,6 @@ def fetch_electricity_price(date):
         return round(pvpc, 4)
     return "N/A"
 
-# Load Excel data
-def load_excel_data(file_path):
-    return pd.read_excel(file_path)
 
 # Plot temperature, state, and current
 def plot_temp_state_current(df, title):
@@ -125,18 +122,7 @@ try:
     # Create two side-by-side columns for the temperature plots
     col1, col2 = st.columns(2)
 
-    with col1:
-        st.header("7th December 2024")
-        fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
-        fig_7.patch.set_facecolor('none')  # Transparent background for the figure
-        ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-        ax_7.plot(df_7["Hour"], df_7["Temperature of the room"], label="7th December", color="blue")
-        ax_7.set_xlabel("Hour")
-        ax_7.set_ylabel("Temperature (°C)")
-        ax_7.set_title("Hourly Temperatures")
-        plt.xticks(rotation=45)
-        st.pyplot(fig_7)
-        st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
+   
 
     
 
