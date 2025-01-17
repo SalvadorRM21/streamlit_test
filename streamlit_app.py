@@ -1,50 +1,47 @@
-import requests
-import json
-import pandas as pd
-import numpy as np
+import streamlit as st
+from datetime import datetime
+from api_connection import get_data_from_api
 
-# Create GET request
-def get_data_from_api(url, headers=None, params=None):
-    try:
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        try:
-            return response.json()
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON response from {url}: {e}")
-            raise Exception(f"Failed to parse JSON response: {e}")
-    except requests.exceptions.RequestException as e:
-        print(f"Error making request to {url}: {e}")
-        raise Exception(f"API request failed: {e}")
+# Function to fetch current temperature
+def fetch_current_temperature(location="Barcelona"):
+    url = "https://weatherapi-com.p.rapidapi.com/current.json"
+    headers = {
+        "X-RapidAPI-Key": "6a425b2a7bmshc1f059e65b98fb7p1cdd78jsn184965114ca2",
+        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+    }
+    params = {"q": location}
+    data = get_data_from_api(url, headers=headers, params=params)
+    return data["current"]["temp_c"] if "current" in data else None
 
-if __name__ == "__main__":
-    # Ejemplo: Obtener temperatura desde WeatherAPI
-    try:
-        url = "https://weatherapi-com.p.rapidapi.com/current.json"
-        headers = {
-            "X-RapidAPI-Key": "your_api_key",
-            "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
-        }
-        params = {"q": "Barcelona"}  # Eliminamos "dt" ya que no aplica en "current.json"
+# Function to fetch today's electricity price
+def fetch_todays_electricity_price():
+    today = datetime.now().strftime('%Y-%m-%dT00:00:00')
+    url = "https://api.esios.ree.es/indicators/1001"
+    headers = {
+        "Authorization": "Token token=your_ree_api_token",
+        "Accept": "application/json; application/vnd.esios-api-v1+json"
+    }
+    params = {"start_date": today, "end_date": today}
+    data = get_data_from_api(url, headers=headers, params=params)
+    if "indicator" in data and "values" in data["indicator"]:
+        return data["indicator"]["values"][0]["value"]
+    return None
 
-        weather_data = get_data_from_api(url, headers, params)
-        print(f"Weather Data for Barcelona: {weather_data}")
-    except Exception as e:
-        print(f"Error fetching weather data: {e}")
+# Streamlit app
+st.set_page_config(layout="wide")
+st.title("Heater Dashboard")
 
-    # Ejemplo: Obtener precio de electricidad desde REE API
-    try:
-        url = "https://api.esios.ree.es/indicators/1001"
-        headers = {
-            "Authorization": "Token token=your_ree_api_token",
-            "Accept": "application/json; application/vnd.esios-api-v1+json"
-        }
-        params = {"start_date": "2022-12-08T00:00:00", "end_date": "2022-12-09T23:59:59"}
+# Fetch and display current temperature and electricity price
+try:
+    temperature = fetch_current_temperature()
+    electricity_price = fetch_todays_electricity_price()
 
-        electricity_price = get_data_from_api(url, headers, params)
-        print(f"Electricity Price Data: {electricity_price}")
-    except Exception as e:
-        print(f"Error fetching electricity price data: {e}")
+    with st.sidebar:
+        st.header("Today's Info")
+        st.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
+        st.metric(label="Electricity Price (€/MWh)", value=f"{electricity_price} €/MWh" if electricity_price else "N/A")
+except Exception as e:
+    st.error(f"Error fetching data: {e}")
 
 
 
