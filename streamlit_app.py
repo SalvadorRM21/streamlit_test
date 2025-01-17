@@ -44,9 +44,43 @@ data = {
     ]
 }
 
-# Load data from Excel
-file_path = '/mnt/data/DATA FOR MANUAL OPERATION HEATER.xlsx'
-data_excel = pd.read_excel(file_path)
+# File uploader for Excel data
+uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+
+if uploaded_file is not None:
+    try:
+        # Load data from uploaded Excel file
+        data_excel = pd.read_excel(uploaded_file)
+
+        # Validate required columns
+        required_columns = ['Time', 'Temperature', 'Current', 'Heater state']
+        if all(col in data_excel.columns for col in required_columns):
+            # Add combined Excel data graph
+            st.header("Manual Heater Operation Data")
+            fig, ax = plt.subplots()
+
+            # Plot Temperature
+            ax.plot(data_excel['Time'], data_excel['Temperature'], label="Temperature (°C)", color="red")
+
+            # Plot Current
+            ax.plot(data_excel['Time'], data_excel['Current'], label="Current (A)", color="green")
+
+            # Plot Heater State
+            heater_state = data_excel['Heater state'].apply(lambda x: 1 if x == 'ON' else 0)
+            ax.step(data_excel['Time'], heater_state, label="Heater State (ON/OFF)", color="blue", where='post')
+
+            # Add labels and legend
+            ax.set_title("Heater Operation")
+            ax.set_xlabel("Time")
+            ax.set_ylabel("Values")
+            plt.xticks(rotation=45)
+            ax.legend()
+
+            st.pyplot(fig)
+        else:
+            st.error(f"The uploaded file must contain the following columns: {', '.join(required_columns)}")
+    except Exception as e:
+        st.error(f"An error occurred while processing the file: {e}")
 
 # Title
 st.title("ThermoScope")
@@ -89,28 +123,5 @@ with graph_col2:
     plt.xticks(rotation=45)
     st.pyplot(fig)
     st.metric("Electricity Price (€/kWh)", f"{price_8} €")
-
-# Add combined Excel data graph
-st.header("Manual Heater Operation Data")
-fig, ax = plt.subplots()
-
-# Plot Temperature
-ax.plot(data_excel['Time'], data_excel['Temperature'], label="Temperature (°C)", color="red")
-
-# Plot Current
-ax.plot(data_excel['Time'], data_excel['Current'], label="Current (A)", color="green")
-
-# Plot Heater State
-heater_state = data_excel['Heater state'].apply(lambda x: 1 if x == 'ON' else 0)
-ax.step(data_excel['Time'], heater_state, label="Heater State (ON/OFF)", color="blue", where='post')
-
-# Add labels and legend
-ax.set_title("Heater Operation")
-ax.set_xlabel("Time")
-ax.set_ylabel("Values")
-plt.xticks(rotation=45)
-ax.legend()
-
-st.pyplot(fig)
 
 
