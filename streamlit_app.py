@@ -21,9 +21,15 @@ def fetch_electricity_price(start_date, end_date):
         "Accept": "application/json; application/vnd.esios-api-v1+json"
     }
     params = {"start_date": start_date, "end_date": end_date}
-    data = get_data_from_api(url, headers=headers, params=params)
-    if "indicator" in data and "values" in data["indicator"]:
-        return [(entry["datetime"], entry["value"]) for entry in data["indicator"]["values"]]
+    try:
+        data = get_data_from_api(url, headers=headers, params=params)
+        if "indicator" in data and "values" in data["indicator"]:
+            return [(entry["datetime"], entry["value"]) for entry in data["indicator"]["values"]]
+    except Exception as e:
+        if "403" in str(e):
+            raise Exception("Access to the REE API is forbidden. Check your token or permissions.")
+        else:
+            raise e
     return []
 
 # Streamlit app
