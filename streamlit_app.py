@@ -119,30 +119,31 @@ st.sidebar.metric(label="Time", value=today_time)
 
 # Add plot to the existing Streamlit app
 # Assuming you have data for Series1 and Series2
-
-
+import pandas as pd
+import matplotlib.pyplot as plt
+import streamlit as st
 
 # Static data for plotting
 data = {
     "2024-12-07": [
-        ("18:00", 17.2), ("18:00:45", 17.6), ("18:01:30", 18.1), ("18:02:15", 18.5),
-        ("18:03:00", 18.9), ("18:03:45", 19.3), ("18:04:30", 19.5), ("18:05:15", 19.4),
-        ("18:06:00", 19.2), ("18:06:45", 18.9), ("18:07:30", 18.5), ("18:08:15", 18.9),
-        ("18:09:00", 19.3), ("18:09:45", 19.5), ("18:10:30", 19.6), ("18:11:15", 19.4),
-        ("18:12:00", 19.1), ("18:12:45", 18.8), ("18:13:30", 18.5), ("18:14:15", 18.9),
-        ("18:15:00", 19.3), ("18:15:45", 19.5), ("18:16:30", 19.4), ("18:17:15", 19.2),
-        ("18:18:00", 18.9), ("18:18:45", 18.5), ("18:19:30", 18.9), ("18:20:15", 19.3),
-        ("18:21:00", 19.5)
+        ("18:00", 17.2, 5.5), ("18:00:45", 17.6, 5.5), ("18:01:30", 18.1, 5.5), ("18:02:15", 18.5, 5.5),
+        ("18:03:00", 18.9, 5.5), ("18:03:45", 19.3, 0), ("18:04:30", 19.5, 0), ("18:05:15", 19.4, 0),
+        ("18:06:00", 19.2, 0), ("18:06:45", 18.9, 0), ("18:07:30", 18.5, 5.5), ("18:08:15", 18.9, 5.5),
+        ("18:09:00", 19.3, 5.5), ("18:09:45", 19.5, 0), ("18:10:30", 19.6, 0), ("18:11:15", 19.4, 0),
+        ("18:12:00", 19.1, 0), ("18:12:45", 18.8, 0), ("18:13:30", 18.5, 5.5), ("18:14:15", 18.9, 5.5),
+        ("18:15:00", 19.3, 5.5), ("18:15:45", 19.5, 0), ("18:16:30", 19.4, 0), ("18:17:15", 19.2, 0),
+        ("18:18:00", 18.9, 0), ("18:18:45", 18.5, 5.5), ("18:19:30", 18.9, 5.5), ("18:20:15", 19.3, 5.5),
+        ("18:21:00", 19.5, 0)
     ],
     "2024-12-08": [
-        ("18:00", 18.0), ("18:00:45", 18.4), ("18:01:30", 18.8), ("18:02:15", 19.2),
-        ("18:03:00", 19.5), ("18:03:45", 19.6), ("18:04:30", 19.3), ("18:05:15", 19.0),
-        ("18:06:00", 18.7), ("18:06:45", 18.5), ("18:07:30", 18.9), ("18:08:15", 19.4),
-        ("18:09:00", 19.5), ("18:09:45", 19.3), ("18:10:30", 19.0), ("18:11:15", 18.7),
-        ("18:12:00", 18.5), ("18:12:45", 18.9), ("18:13:30", 19.3), ("18:14:15", 19.5),
-        ("18:15:00", 19.4), ("18:15:45", 19.2), ("18:16:30", 18.9), ("18:17:15", 18.5),
-        ("18:18:00", 18.9), ("18:18:45", 19.3), ("18:19:30", 19.5), ("18:20:15", 19.4),
-        ("18:21:00", 19.2)
+        ("18:00", 18.0, 5.5), ("18:00:45", 18.4, 5.5), ("18:01:30", 18.8, 5.5), ("18:02:15", 19.2, 5.5),
+        ("18:03:00", 19.5, 0), ("18:03:45", 19.6, 0), ("18:04:30", 19.3, 0), ("18:05:15", 19.0, 0),
+        ("18:06:00", 18.7, 0), ("18:06:45", 18.5, 5.5), ("18:07:30", 18.9, 5.5), ("18:08:15", 19.4, 5.5),
+        ("18:09:00", 19.5, 0), ("18:09:45", 19.3, 0), ("18:10:30", 19.0, 0), ("18:11:15", 18.7, 0),
+        ("18:12:00", 18.5, 5.5), ("18:12:45", 18.9, 5.5), ("18:13:30", 19.3, 5.5), ("18:14:15", 19.5, 0),
+        ("18:15:00", 19.4, 0), ("18:15:45", 19.2, 0), ("18:16:30", 18.9, 0), ("18:17:15", 18.5, 5.5),
+        ("18:18:00", 18.9, 5.5), ("18:18:45", 19.3, 5.5), ("18:19:30", 19.5, 0), ("18:20:15", 19.4, 0),
+        ("18:21:00", 19.2, 0)
     ]
 }
 
@@ -150,10 +151,10 @@ data = {
 hourly_temp_7 = data["2024-12-07"]
 hourly_temp_8 = data["2024-12-08"]
 
-df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
-df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
+df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature", "Current"])
+df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature", "Current"])
 
-# Create two side-by-side columns for the temperature plots
+# Create two side-by-side columns for the temperature and current plots
 col1, col2 = st.columns(2)
 
 with col1:
@@ -161,10 +162,18 @@ with col1:
     fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
+    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="Temperature", color="blue")
     ax_7.set_xlabel("Hour")
-    ax_7.set_ylabel("Temperature (°C)")
-    ax_7.set_title("Hourly Temperatures")
+    ax_7.set_ylabel("Temperature (°C)", color="blue")
+    ax_7.tick_params(axis='y', labelcolor="blue")
+
+    # Add current to the same plot with a secondary axis
+    ax7_current = ax_7.twinx()
+    ax7_current.plot(df_7["Hour"], df_7["Current"], label="Current", color="orange")
+    ax7_current.set_ylabel("Current (A)", color="orange")
+    ax7_current.tick_params(axis='y', labelcolor="orange")
+
+    ax_7.set_title("Temperature and Current")
     plt.xticks(rotation=45)
     st.pyplot(fig_7)
 
@@ -173,12 +182,21 @@ with col2:
     fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
+    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="Temperature", color="blue")
     ax_8.set_xlabel("Hour")
-    ax_8.set_ylabel("Temperature (°C)")
-    ax_8.set_title("Hourly Temperatures")
+    ax_8.set_ylabel("Temperature (°C)", color="blue")
+    ax_8.tick_params(axis='y', labelcolor="blue")
+
+    # Add current to the same plot with a secondary axis
+    ax8_current = ax_8.twinx()
+    ax8_current.plot(df_8["Hour"], df_8["Current"], label="Current", color="orange")
+    ax8_current.set_ylabel("Current (A)", color="orange")
+    ax8_current.tick_params(axis='y', labelcolor="orange")
+
+    ax_8.set_title("Temperature and Current")
     plt.xticks(rotation=45)
     st.pyplot(fig_8)
+
 
 
 
