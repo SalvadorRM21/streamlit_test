@@ -73,9 +73,7 @@ def fetch_electricity_price(date):
 
 st.title("ThermoScope")
 
-try:
-    # Fetch current temperature
-    temperature = fetch_current_temperature()
+
 
     # Fetch hourly temperatures for 7th and 8th December
     hourly_temp_7 = fetch_hourly_temperature("2024-12-07")
