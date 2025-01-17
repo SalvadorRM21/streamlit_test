@@ -50,14 +50,20 @@ def fetch_hourly_temperature(date, location="Barcelona"):
 
 # Function to fetch electricity price for a specific date
 def fetch_electricity_price(date):
-    # Placeholder for API or data fetching logic
-    # Replace this with the actual API logic or static data as needed
-    electricity_prices = {
-        "2022-12-07": 0.15,  # Example price in €/kWh
-        "2022-12-08": 0.18,
-        "2024-01-16": 0.20  # Example price for yesterday
+    url = "https://api.esios.ree.es/indicators/1001"
+    headers = {
+        "Accept": "application/json"
     }
-    return electricity_prices.get(date, "N/A")
+    params = {
+        "start_date": f"{date}T00:00:00",
+        "end_date": f"{date}T23:59:59"
+    }
+    data = get_data_from_api(url, headers=headers, params=params)
+    if "included" in data and len(data["included"]) > 0:
+        # Extract the final consumer price in €/MWh and convert to €/kWh
+        pvpc = data["included"][0]["attributes"]["values"][0]["value"] / 1000  # Convert €/MWh to €/kWh
+        return round(pvpc, 4)  # Round to 4 decimal places for clarity
+    return "N/A"
 
 st.title("ThermoScope")
 
