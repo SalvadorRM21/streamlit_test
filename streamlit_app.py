@@ -44,15 +44,22 @@ def fetch_hourly_temperature(date, station_id="0076"):
         "Accept": "application/json",
         "api_key": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
     }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    data = response.json()
-    if "datos" in data:
-        datos_response = requests.get(data["datos"])
-        datos_response.raise_for_status()
-        hourly_data = datos_response.json()
-        return [(obs["hora"], obs["tmed"]) for obs in hourly_data if "hora" in obs and "tmed" in obs]
-    return []
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        print("Primary API Response:", data)  # Debugging the main response
+
+        if "datos" in data:
+            datos_response = requests.get(data["datos"])
+            datos_response.raise_for_status()
+            hourly_data = datos_response.json()
+            print("Hourly Data Response:", hourly_data)  # Debugging the nested data
+            return [(obs["hora"], obs["tmed"]) for obs in hourly_data if "hora" in obs and "tmed" in obs]
+
+    except Exception as e:
+        print("Error fetching hourly temperature:", e)  # Print any errors
+        return []
 
 # Function to fetch electricity price for a specific date from REE API
 def fetch_electricity_price(date):
@@ -86,6 +93,10 @@ try:
     hourly_temp_7 = fetch_hourly_temperature("2024-12-07")
     hourly_temp_8 = fetch_hourly_temperature("2024-12-08")
 
+    # Debugging data retrieval
+    print("Hourly Temperature Data for 7th December:", hourly_temp_7)
+    print("Hourly Temperature Data for 8th December:", hourly_temp_8)
+
     # Fetch electricity prices for 7th, 8th December, and today
     price_7 = fetch_electricity_price("2024-12-07")
     price_8 = fetch_electricity_price("2024-12-08")
@@ -102,9 +113,7 @@ try:
 
     with col1:
         st.header("7th December 2024")
-        fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
-        fig_7.patch.set_facecolor('none')  # Transparent background for the figure
-        ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+        fig_7, ax_7 = plt.subplots(figsize=(6, 3))
         ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
         ax_7.set_xlabel("Hour")
         ax_7.set_ylabel("Temperature (°C)")
@@ -115,12 +124,10 @@ try:
 
     with col2:
         st.header("8th December 2024")
-        fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
-        fig_8.patch.set_facecolor('none')  # Transparent background for the figure
-        ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+        fig_8, ax_8 = plt.subplots(figsize=(6, 3))
         ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
         ax_8.set_xlabel("Hour")
-        ax_8.set_ylabel("Temperature (°C")
+        ax_8.set_ylabel("Temperature (°C)")
         ax_8.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_8)
