@@ -24,8 +24,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Function to fetch hourly temperature (using provided static data for 7th and 8th December 2024)
-def fetch_hourly_temperature(date, station_id="0076"):
+
     # Static data for 7th and 8th December 2024
     data = {
         "2024-12-07": [
@@ -73,11 +72,6 @@ def fetch_electricity_price(date):
 
 st.title("ThermoScope")
 
-
-
-    # Fetch hourly temperatures for 7th and 8th December
-    hourly_temp_7 = fetch_hourly_temperature("2024-12-07")
-    hourly_temp_8 = fetch_hourly_temperature("2024-12-08")
 
     # Fetch electricity prices for 7th, 8th December, and today
     price_7 = fetch_electricity_price("2024-12-07")
