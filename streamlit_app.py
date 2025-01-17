@@ -156,8 +156,8 @@ data = {
 hourly_temp_9 = data["2024-12-09"]
 hourly_temp_10 = data["2024-12-10"]
 
-df_9 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature", "Current"])
-df_10 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature", "Current"])
+df_9 = pd.DataFrame(hourly_temp_9, columns=["Hour", "Temperature", "Current"])
+df_10 = pd.DataFrame(hourly_temp_10, columns=["Hour", "Temperature", "Current"])
 
 # Create two side-by-side columns for the temperature and current plots
 col1, col2 = st.columns(2)
