@@ -26,9 +26,10 @@ st.markdown(
 
 # Function to fetch current temperature
 def fetch_current_temperature(location="Barcelona"):
-    url = "https://opendata.aemet.es/opendata/api/observacion/convencional/todas"
+    url = "https://weatherapi-com.p.rapidapi.com/current.json"
     headers = {
-        "api_key": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
+        "X-RapidAPI-Key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82", 
+        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
     }
     params = {"q": location}
     response = requests.get(url, headers=headers, params=params)
@@ -36,29 +37,20 @@ def fetch_current_temperature(location="Barcelona"):
     data = response.json()
     return data["current"]["temp_c"] if "current" in data else None
 
-# Function to fetch hourly temperature for a specific date from AEMET API
-def fetch_hourly_temperature_aemet(date, location="Barcelona"):
-    api_key = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
-    base_url = "https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/"
-    location_code = "08019"  # Barcelona location code in AEMET
-    full_url = f"{base_url}{location_code}?api_key={api_key}"
-
-    response = requests.get(full_url)
+# Function to fetch hourly temperature for a specific date
+def fetch_hourly_temperature(date, location="Barcelona"):
+    url = "https://weatherapi-com.p.rapidapi.com/history.json"
+    headers = {
+        "X-RapidAPI-Key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82",
+        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+    }
+    params = {"q": location, "dt": date}
+    response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
     data = response.json()
-
-    if "datos" in data:
-        hourly_data_url = data["datos"]
-        hourly_response = requests.get(hourly_data_url)
-        hourly_response.raise_for_status()
-        hourly_data = hourly_response.json()
-
-        hourly_temps = []
-        for entry in hourly_data[0]["prediccion"]["dia"]:
-            if entry["fecha"] == date:
-                for hour in entry["hora"]:
-                    hourly_temps.append((hour["periodo"], hour["temperatura"]))
-        return hourly_temps
+    if "forecast" in data and "forecastday" in data["forecast"]:
+        hourly_data = data["forecast"]["forecastday"][0]["hour"]
+        return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]
     return []
 
 # Function to fetch electricity price for a specific date from REE API
@@ -112,17 +104,83 @@ try:
     # Fetch current temperature
     temperature = fetch_current_temperature()
 
-    # Fetch hourly temperatures for 7th and 8th December using AEMET
-    hourly_temp_7 = fetch_hourly_temperature_aemet("2024-12-07")
-    hourly_temp_8 = fetch_hourly_temperature_aemet("2024-12-08")
+    # Fetch hourly temperatures for 7th and 8th December
+    hourly_temp_7 = fetch_hourly_temperature("2024-12-07")
+    hourly_temp_8 = fetch_hourly_temperature("2024-12-08")
 
     # Fetch electricity prices for 7th, 8th December, and today
     price_7 = fetch_electricity_price("2024-12-07")
     price_8 = fetch_electricity_price("2024-12-08")
     today_date = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%Y-%m-%d")
     today_price = fetch_electricity_price(today_date)
-    today_time
+    today_time = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%H:%M")
 
+    # Prepare data for plotting
+    df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
+    df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
+
+    # Load and process data from Excel files
+    manual_file = "data/Befre algrtihme - Manual regulation.xlsx"
+    auto_file = "data/test with automatic heater regulation.xlsx"
+
+    manual_data = load_excel_data(manual_file)
+    auto_data = load_excel_data(auto_file)
+
+    # Create two side-by-side columns for the temperature plots
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.header("7th December 2024")
+        fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
+        fig_7.patch.set_facecolor('none')  # Transparent background for the figure
+        ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+        ax_7.plot(df_7["Hour"], df_7["Temperature of the room"], label="7th December", color="blue")
+        ax_7.set_xlabel("Hour")
+        ax_7.set_ylabel("Temperature (°C)")
+        ax_7.set_title("Hourly Temperatures")
+        plt.xticks(rotation=45)
+        st.pyplot(fig_7)
+        st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
+
+    with col2:
+        st.header("8th December 2024")
+        fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
+        fig_8.patch.set_facecolor('none')  # Transparent background for the figure
+        ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+        ax_8.plot(df_8["Hour"], df_8["Temperature of the room"], label="8th December", color="orange")
+        ax_8.set_xlabel("Hour")
+        ax_8.set_ylabel("Temperature (°C")
+        ax_8.set_title("Hourly Temperatures")
+        plt.xticks(rotation=45)
+        st.pyplot(fig_8)
+        st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
+
+    # Add a horizontal divider
+    st.markdown("---")
+    st.subheader("Room Temperature, State, and Current")
+
+    # Create two side-by-side columns for the new plots
+    col3, col4 = st.columns(2)
+
+    with col3:
+        st.header("Manual Regulation")
+        fig_manual = plot_temp_state_current(manual_data, "Manual Regulation")
+        st.pyplot(fig_manual)
+
+    with col4:
+        st.header("Automatic Regulation")
+        fig_auto = plot_temp_state_current(auto_data, "Automatic Regulation")
+        st.pyplot(fig_auto)
+
+    # Display current temperature, today's electricity price, and time
+    st.sidebar.header("Today's Info")
+    st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
+    st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
+    st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
+    st.sidebar.metric(label="Time", value=today_time)
+
+except Exception as e:
+    st.sidebar.error(f"Error fetching data: {e}")
 
 
 
