@@ -134,7 +134,7 @@ try:
         fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
         fig_7.patch.set_facecolor('none')  # Transparent background for the figure
         ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-        ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
+        ax_7.plot(df_7["Hour"], df_7["Temperature of the room"], label="7th December", color="blue")
         ax_7.set_xlabel("Hour")
         ax_7.set_ylabel("Temperature (°C)")
         ax_7.set_title("Hourly Temperatures")
@@ -147,7 +147,7 @@ try:
         fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
         fig_8.patch.set_facecolor('none')  # Transparent background for the figure
         ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-        ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
+        ax_8.plot(df_8["Hour"], df_8["Temperature of the room"], label="8th December", color="orange")
         ax_8.set_xlabel("Hour")
         ax_8.set_ylabel("Temperature (°C")
         ax_8.set_title("Hourly Temperatures")
@@ -181,6 +181,7 @@ try:
 
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
