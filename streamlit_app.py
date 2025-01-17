@@ -12,7 +12,8 @@ st.markdown(
     """
     <style>
     body {
-        background: linear-gradient(to bottom right, red, blue);
+        background: linear-gradient(to bottom right, #FF4500, #1E90FF); /* Sunset gradient */
+        color: white; /* Ensure text is visible */
     }
     </style>
     """,
@@ -87,6 +88,7 @@ try:
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
