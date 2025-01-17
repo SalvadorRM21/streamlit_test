@@ -77,6 +77,8 @@ def fetch_electricity_price(date):
 # Fetch electricity prices for 7th, 8th December, and today
 price_7 = fetch_electricity_price("2024-12-07")
 price_8 = fetch_electricity_price("2024-12-08")
+price_9 = fetch_electricity_price("2024-12-09")
+price_10 = fetch_electricity_price("2024-12-10")
 today_date = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%Y-%m-%d")
 today_price = fetch_electricity_price(today_date)
 today_time = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%H:%M")
@@ -261,6 +263,7 @@ with col1:
     ax_9.set_xlabel("Hour")
     ax_9.set_ylabel("Temperature (°C)", color="blue")
     ax_9.tick_params(axis='y', labelcolor="blue")
+    st.metric(label="Electricity Price (€/kWh) for December 9th 2024", value=f"{price_9} €")
 
     # Add current to the same plot with a secondary axis
     ax9_current = ax_9.twinx()
@@ -282,6 +285,7 @@ with col2:
     ax_10.set_xlabel("Hour")
     ax_10.set_ylabel("Temperature (°C)", color="blue")
     ax_10.tick_params(axis='y', labelcolor="blue")
+    st.metric(label="Electricity Price (€/kWh) for December 10th 2024", value=f"{price_10} €")
 
     # Add current to the same plot with a secondary axis
     ax10_current = ax_10.twinx()
