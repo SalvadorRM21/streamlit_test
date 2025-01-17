@@ -120,12 +120,7 @@ try:
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
     df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
 
-    # Load and process data from Excel files
-    manual_file = "data/Befre algrtihme - Manual regulation.xlsx"
-    auto_file = "data/test with automatic heater regulation.xlsx"
 
-    manual_data = load_excel_data(manual_file)
-    auto_data = load_excel_data(auto_file)
 
     # Create two side-by-side columns for the temperature plots
     col1, col2 = st.columns(2)
@@ -143,35 +138,10 @@ try:
         st.pyplot(fig_7)
         st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
 
-    with col2:
-        st.header("8th December 2024")
-        fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
-        fig_8.patch.set_facecolor('none')  # Transparent background for the figure
-        ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-        ax_8.plot(df_8["Hour"], df_8["Temperature of the room"], label="8th December", color="orange")
-        ax_8.set_xlabel("Hour")
-        ax_8.set_ylabel("Temperature (°C")
-        ax_8.set_title("Hourly Temperatures")
-        plt.xticks(rotation=45)
-        st.pyplot(fig_8)
-        st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
+    
 
-    # Add a horizontal divider
-    st.markdown("---")
-    st.subheader("Room Temperature, State, and Current")
 
-    # Create two side-by-side columns for the new plots
-    col3, col4 = st.columns(2)
-
-    with col3:
-        st.header("Manual Regulation")
-        fig_manual = plot_temp_state_current(manual_data, "Manual Regulation")
-        st.pyplot(fig_manual)
-
-    with col4:
-        st.header("Automatic Regulation")
-        fig_auto = plot_temp_state_current(auto_data, "Automatic Regulation")
-        st.pyplot(fig_auto)
+    
 
     # Display current temperature, today's electricity price, and time
     st.sidebar.header("Today's Info")
