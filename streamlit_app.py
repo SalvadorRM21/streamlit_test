@@ -126,6 +126,26 @@ st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real t
 st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
 st.sidebar.metric(label="Time", value=today_time)
 
+import pandas as pd
+import matplotlib.pyplot as plt
+import streamlit as st
+
+# Centered and italicized title
+st.markdown(
+    """
+    <style>
+    .centered-title {
+        text-align: center;
+        font-style: italic;
+        font-size: 36px;
+        color: black;
+    }
+    </style>
+    <div class="centered-title">ThermoScope</div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Static data for plotting
 voltage = 220  # Assumed voltage in volts
 data = {
@@ -179,20 +199,15 @@ data = {
         ("6:36:15", 18.60, 3.40, "ON"), ("6:37:00", 18.80, 3.30, "ON"), ("6:37:45", 19.00, 3.20, "ON"),
         ("6:38:30", 19.20, 3.10, "ON"), ("6:39:15", 19.40, 3.00, "ON"), ("6:40:00", 19.60, 2.90, "ON"),
         ("6:40:45", 19.80, 2.80, "ON"), ("6:41:30", 20.00, 2.70, "ON"), ("6:42:15", 20.20, 2.60, "ON"),
-        ("6:43:00", 20.40, 2.50, "ON"), ("6:43:45", 20.60, 2.40, "ON"), ("6:44:30", 20.80, 2.30, "ON")
+        ("6:43:00", 20.40, 2.50, "ON"), ("6:43:45", 20.60, 2.40, "ON"), ("6:44:30", 20.80, 2.30, "ON"),
     ]
 }
 
 # Prepare data for plotting
-hourly_temp_7 = data["2024-12-07"]
-hourly_temp_8 = data["2024-12-08"]
-hourly_temp_9 = data["2024-12-09"]
-hourly_temp_10 = data["2024-12-10"]
-
-df_7 = pd.DataFrame(hourly_temp_7, columns=["Time", "Temperature", "Current", "Heater State"])
-df_8 = pd.DataFrame(hourly_temp_8, columns=["Time", "Temperature", "Current", "Heater State"])
-df_9 = pd.DataFrame(hourly_temp_9, columns=["Time", "Temperature", "Current", "Heater State"])
-df_10 = pd.DataFrame(hourly_temp_10, columns=["Time", "Temperature", "Current", "Heater State"])
+df_7 = pd.DataFrame(data["2024-12-07"], columns=["Time", "Temperature", "Current", "Heater State"])
+df_8 = pd.DataFrame(data["2024-12-08"], columns=["Time", "Temperature", "Current", "Heater State"])
+df_9 = pd.DataFrame(data["2024-12-09"], columns=["Time", "Temperature", "Current", "Heater State"])
+df_10 = pd.DataFrame(data["2024-12-10"], columns=["Time", "Temperature", "Current", "Heater State"])
 
 # Calculate power and consumption in kWh
 def calculate_consumption(df):
@@ -205,19 +220,38 @@ df_8 = calculate_consumption(df_8)
 df_9 = calculate_consumption(df_9)
 df_10 = calculate_consumption(df_10)
 
-# Create two side-by-side columns for the temperature and current plots
-for day, df, title in zip([
+# Create plots for each day
+for day, df in zip([
     "7th December 2024",
     "8th December 2024",
     "9th December 2024",
     "10th December 2024"
-], [df_7, df_8, df_9, df_10], ["Room Temperature and Current"] * 4):
+], [df_7, df_8, df_9, df_10]):
     st.header(day)
-    fig, ax = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig.patch.set_facecolor('none')  # Transparent background for the figure
-    ax.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax.plot(df_8["Time"], df_10[:"room curve"][{"line.text"]
+    fig, ax1 = plt.subplots(figsize=(8, 4))
 
+    # Plot temperature
+    ax1.plot(df["Time"], df["Temperature"], label="Temperature", color="blue", marker="o")
+    ax1.set_xlabel("Time")
+    ax1.set_ylabel("Temperature (°C)", color="blue")
+    ax1.tick_params(axis='y', labelcolor="blue")
+
+    # Plot current on secondary y-axis
+    ax2 = ax1.twinx()
+    ax2.plot(df["Time"], df["Current"], label="Current", color="orange", marker="x")
+    ax2.set_ylabel("Current (A)", color="orange")
+    ax2.tick_params(axis='y', labelcolor="orange")
+
+    # Customize plot
+    fig.suptitle(f"{day}: Temperature and Current")
+    plt.xticks(rotation=45)
+    fig.tight_layout()
+
+    st.pyplot(fig)
+
+    # Show total consumption
+    total_consumption = df["Consumption (kWh)"].sum()
+    st.metric(label=f"Total Consumption for {day} (kWh)", value=round(total_consumption, 3))
 
 
 
