@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import pytz
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -13,11 +13,11 @@ st.markdown(
     """
     <style>
     [data-testid="stAppViewContainer"] {
-        background: linear-gradient(to bottom right, #FF4500, #1E90FF);
-        color: white;
+        background: linear-gradient(to bottom right, #FF4500, #1E90FF); /* Sunset gradient */
+        color: white; /* Ensure text is visible */
     }
     [data-testid="stSidebar"] {
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.5); /* Transparent sidebar for better contrast */
     }
     </style>
     """,
@@ -44,84 +44,77 @@ data = {
     ]
 }
 
-# File uploader for Excel data
-uploaded_file = st.file_uploader("Upload your Excel file", type=["xlsx"])
+# Function to fetch electricity price for a specific date from REE API
+def fetch_electricity_price(date):
+    endpoint = 'https://apidatos.ree.es'
+    get_archives = '/en/datos/mercados/precios-mercados-tiempo-real'
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Host': 'apidatos.ree.es'
+    }
+    params = {
+        'start_date': f'{date}T00:00',
+        'end_date': f'{date}T23:59',
+        'time_trunc': 'hour'
+    }
+    response = requests.get(endpoint + get_archives, headers=headers, params=params)
+    response.raise_for_status()
+    data_json = response.json()
+    if "included" in data_json:
+        pvpc = data_json["included"][0]["attributes"]["values"][0]["value"] / 1000  # Convert €/MWh to €/kWh
+        return round(pvpc, 4)
+    return "N/A"
 
-if uploaded_file is not None:
-    try:
-        # Load data from uploaded Excel file
-        data_excel = pd.read_excel(uploaded_file)
-
-        # Validate required columns
-        required_columns = ['Time', 'Temperature', 'Current', 'Heater state']
-        if all(col in data_excel.columns for col in required_columns):
-            # Add combined Excel data graph
-            st.header("Manual Heater Operation Data")
-            fig, ax = plt.subplots()
-
-            # Plot Temperature
-            ax.plot(data_excel['Time'], data_excel['Temperature'], label="Temperature (°C)", color="red")
-
-            # Plot Current
-            ax.plot(data_excel['Time'], data_excel['Current'], label="Current (A)", color="green")
-
-            # Plot Heater State
-            heater_state = data_excel['Heater state'].apply(lambda x: 1 if x == 'ON' else 0)
-            ax.step(data_excel['Time'], heater_state, label="Heater State (ON/OFF)", color="blue", where='post')
-
-            # Add labels and legend
-            ax.set_title("Heater Operation")
-            ax.set_xlabel("Time")
-            ax.set_ylabel("Values")
-            plt.xticks(rotation=45)
-            ax.legend()
-
-            st.pyplot(fig)
-        else:
-            st.error(f"The uploaded file must contain the following columns: {', '.join(required_columns)}")
-    except Exception as e:
-        st.error(f"An error occurred while processing the file: {e}")
-
-# Title
 st.title("ThermoScope")
 
-# Fetch electricity prices (placeholder function)
-def fetch_electricity_price(date):
-    return 0.15  # Placeholder value
-
-# Fetch prices
+# Fetch electricity prices for 7th, 8th December, and today
 price_7 = fetch_electricity_price("2024-12-07")
 price_8 = fetch_electricity_price("2024-12-08")
-
 today_date = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%Y-%m-%d")
 today_price = fetch_electricity_price(today_date)
+today_time = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%H:%M")
 
-df_7 = pd.DataFrame(data["2024-12-07"], columns=["Hour", "Temperature"])
-df_8 = pd.DataFrame(data["2024-12-08"], columns=["Hour", "Temperature"])
+# Prepare data for plotting
+hourly_temp_7 = data["2024-12-07"]
+hourly_temp_8 = data["2024-12-08"]
+df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
+df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
 
-# Create two columns for December 7th and 8th
-graph_col1, graph_col2 = st.columns(2)
+# Create two side-by-side columns for the temperature plots
+col1, col2 = st.columns(2)
 
-with graph_col1:
+with col1:
     st.header("7th December 2024")
-    fig, ax = plt.subplots()
-    ax.plot(df_7["Hour"], df_7["Temperature"], label="Temperature", color="blue")
-    ax.set_title("Hourly Temperature")
-    ax.set_xlabel("Hour")
-    ax.set_ylabel("Temperature (°C)")
+    fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
+    fig_7.patch.set_facecolor('none')  # Transparent background for the figure
+    ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
+    ax_7.set_xlabel("Hour")
+    ax_7.set_ylabel("Temperature (°C)")
+    ax_7.set_title("Hourly Temperatures")
     plt.xticks(rotation=45)
-    st.pyplot(fig)
-    st.metric("Electricity Price (€/kWh)", f"{price_7} €")
+    st.pyplot(fig_7)
+    st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
 
-with graph_col2:
+with col2:
     st.header("8th December 2024")
-    fig, ax = plt.subplots()
-    ax.plot(df_8["Hour"], df_8["Temperature"], label="Temperature", color="orange")
-    ax.set_title("Hourly Temperature")
-    ax.set_xlabel("Hour")
-    ax.set_ylabel("Temperature (°C)")
+    fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
+    fig_8.patch.set_facecolor('none')  # Transparent background for the figure
+    ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
+    ax_8.set_xlabel("Hour")
+    ax_8.set_ylabel("Temperature (°C)")
+    ax_8.set_title("Hourly Temperatures")
     plt.xticks(rotation=45)
-    st.pyplot(fig)
-    st.metric("Electricity Price (€/kWh)", f"{price_8} €")
+    st.pyplot(fig_8)
+    st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
+
+# Display current temperature, today's electricity price, and time
+st.sidebar.header("Today's Info")
+st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
+st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real temperature if available
+st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
+st.sidebar.metric(label="Time", value=today_time)
 
 
