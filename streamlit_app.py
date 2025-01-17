@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Streamlit app configuration
-st.set_page_config(layout="wide", page_title="*Heater´s metrics Dashboard*")
+st.set_page_config(layout="wide", page_title="Heater Dashboard")
 
 # Add custom styles for background
 st.markdown(
@@ -48,7 +48,17 @@ def fetch_hourly_temperature(date, location="Barcelona"):
         return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]  # Extract only the hour
     return []
 
-st.title("*ThermoScope*")
+# Function to fetch electricity price for a specific date
+def fetch_electricity_price(date):
+    # Placeholder for API or data fetching logic
+    # Replace this with the actual API logic or static data as needed
+    electricity_prices = {
+        "2022-12-07": 0.15,  # Example price in €/kWh
+        "2022-12-08": 0.18
+    }
+    return electricity_prices.get(date, "N/A")
+
+st.title("Heater Dashboard")
 
 try:
     # Fetch current temperature
@@ -57,6 +67,10 @@ try:
     # Fetch hourly temperatures for 7th and 8th December
     hourly_temp_7 = fetch_hourly_temperature("2022-12-07")
     hourly_temp_8 = fetch_hourly_temperature("2022-12-08")
+
+    # Fetch electricity prices for 7th and 8th December
+    price_7 = fetch_electricity_price("2022-12-07")
+    price_8 = fetch_electricity_price("2022-12-08")
 
     # Prepare data for plotting
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
@@ -76,6 +90,7 @@ try:
         ax_7.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_7)
+        st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
 
     with col2:
         st.header("8th December")
@@ -88,6 +103,7 @@ try:
         ax_8.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_8)
+        st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
 
     # Display current temperature
     st.sidebar.header("Today's Info")
@@ -95,6 +111,7 @@ try:
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
