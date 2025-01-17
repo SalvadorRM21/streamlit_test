@@ -95,7 +95,7 @@ with col1:
     ax_7.set_title("Outside Temperature")
     plt.xticks(rotation=45)
     st.pyplot(fig_7)
-    st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
+    st.metric(label="Electricity Price (€/kWh) for 7th December 2024", value=f"{price_7} €")
 
 with col2:
     st.header("8th December 2024")
@@ -108,7 +108,7 @@ with col2:
     ax_8.set_title("Outside Temperature")
     plt.xticks(rotation=45)
     st.pyplot(fig_8)
-    st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
+    st.metric(label="Electricity Price (€/kWh) for 8th December 2024", value=f"{price_8} €")
 
 # Display current temperature, today's electricity price, and time
 st.sidebar.header("Today's Info")
