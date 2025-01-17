@@ -11,9 +11,12 @@ st.set_page_config(layout="wide", page_title="Heater Dashboard")
 st.markdown(
     """
     <style>
-    body {
+    [data-testid="stAppViewContainer"] {
         background: linear-gradient(to bottom right, #FF4500, #1E90FF); /* Sunset gradient */
         color: white; /* Ensure text is visible */
+    }
+    [data-testid="stSidebar"] {
+        background: rgba(0, 0, 0, 0.5); /* Transparent sidebar for better contrast */
     }
     </style>
     """,
@@ -77,7 +80,7 @@ try:
         fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
         ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
         ax_8.set_xlabel("Hour")
-        ax_8.set_ylabel("Temperature (°C)")
+        ax_8.set_ylabel("Temperature (°C")
         ax_8.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_8)
@@ -88,6 +91,7 @@ try:
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
