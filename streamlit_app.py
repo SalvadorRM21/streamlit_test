@@ -117,8 +117,13 @@ st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real t
 st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
 st.sidebar.metric(label="Time", value=today_time)
 
+# Add plot to the existing Streamlit app
+# Assuming you have data for Series1 and Series2
+
+import pandas as pd
+
 # Load data from the repository
-url = 'https://raw.githubusercontent.com/SalvadorRM21/streamlit_test/Heater_Data_vi/DATA%20FOR%20AUTO%20OPERATION%20HEATER.csv'
+url = 'https://raw.githubusercontent.com/SalvadorRM21/streamlit_test/Heater_Data_vi/data/DATA%20FOR%20AUTO%20OPERATION%20HEATER.csv'
 data = pd.read_csv(url)
 
 # Assuming the data has columns: 'Time', 'Temperature', 'Current'
@@ -148,6 +153,5 @@ plt.grid(True)
 
 # Display the plot in Streamlit
 st.pyplot(fig)
-
 
 
