@@ -4,6 +4,18 @@ from api_connection import get_data_from_api
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# Add custom styles for background
+st.markdown(
+    """
+    <style>
+    body {
+        background: linear-gradient(to bottom right, red, blue);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # Function to fetch current temperature
 def fetch_current_temperature(location="Barcelona"):
     url = "https://weatherapi-com.p.rapidapi.com/current.json"
@@ -70,9 +82,11 @@ try:
 
     # Display current temperature
     st.sidebar.header("Today's Info")
+    st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
