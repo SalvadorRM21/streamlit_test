@@ -172,8 +172,8 @@ with col1:
     ax7_current.tick_params(axis='y', labelcolor="orange")
 
     ax_7.set_title("Room Temperature and Current")
-    ax_7.set_xticks(range(0, len(df_7["Hour"]), 5))  # Add spacing to the x-axis ticks
-    ax_7.set_xticklabels(df_7["Hour"].iloc[::5], rotation=45)  # Better x-axis labels
+    ax_7.set_xticks(range(0, len(df_7["Hour"]), 2))  # Add spacing to the x-axis ticks
+    ax_7.set_xticklabels(df_7["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
     st.pyplot(fig_7)
 
 with col2:
@@ -193,8 +193,8 @@ with col2:
     ax8_current.tick_params(axis='y', labelcolor="orange")
 
     ax_8.set_title("Room Temperature and Current")
-    ax_8.set_xticks(range(0, len(df_8["Hour"]), 5))  # Add spacing to the x-axis ticks
-    ax_8.set_xticklabels(df_8["Hour"].iloc[::5], rotation=45)  # Better x-axis labels
+    ax_8.set_xticks(range(0, len(df_8["Hour"]), 2))  # Add spacing to the x-axis ticks
+    ax_8.set_xticklabels(df_8["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
     st.pyplot(fig_8)
 
 
