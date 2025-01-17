@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timedelta
 from api_connection import get_data_from_api
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -54,7 +54,8 @@ def fetch_electricity_price(date):
     # Replace this with the actual API logic or static data as needed
     electricity_prices = {
         "2022-12-07": 0.15,  # Example price in €/kWh
-        "2022-12-08": 0.18
+        "2022-12-08": 0.18,
+        "2024-01-16": 0.20  # Example price for yesterday
     }
     return electricity_prices.get(date, "N/A")
 
@@ -68,9 +69,11 @@ try:
     hourly_temp_7 = fetch_hourly_temperature("2022-12-07")
     hourly_temp_8 = fetch_hourly_temperature("2022-12-08")
 
-    # Fetch electricity prices for 7th and 8th December
+    # Fetch electricity prices for 7th and 8th December and yesterday
     price_7 = fetch_electricity_price("2022-12-07")
     price_8 = fetch_electricity_price("2022-12-08")
+    yesterday_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    yesterday_price = fetch_electricity_price(yesterday_date)
 
     # Prepare data for plotting
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
@@ -80,7 +83,7 @@ try:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.header("7th December")
+        st.header("7th December 2024")
         fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
         fig_7.patch.set_facecolor('none')  # Transparent background for the figure
         ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -93,7 +96,7 @@ try:
         st.metric(label="Electricity Price (€/kWh)", value=f"{price_7} €")
 
     with col2:
-        st.header("8th December")
+        st.header("8th December 2024")
         fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
         fig_8.patch.set_facecolor('none')  # Transparent background for the figure
         ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -105,12 +108,15 @@ try:
         st.pyplot(fig_8)
         st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
 
-    # Display current temperature
+    # Display current temperature and yesterday's price
     st.sidebar.header("Today's Info")
     st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
+    st.sidebar.metric(label="Yesterday's Electricity Price (€/kWh)", value=f"{yesterday_price} €")
+
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
+
 
 
 
