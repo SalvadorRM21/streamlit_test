@@ -7,6 +7,19 @@ import requests
 
 # Streamlit app configuration
 st.set_page_config(layout="wide", page_title="ThermoScope")
+st.markdown(
+    """
+    <style>
+    .centered-title {
+        text-align: center;
+        font-style: italic;
+        font-size: 36px;
+        color: black;
+    }
+    </style>
+    <div class="centered-title">ThermoScope</div>
+    """,
+    unsafe_allow_html=True
 
 # Add custom styles for background
 st.markdown(
