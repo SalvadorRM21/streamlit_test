@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Streamlit app configuration
-st.set_page_config(layout="wide", page_title="Heater Dashboard")
+st.set_page_config(layout="wide", page_title="*Heater´s metrics Dashboard*")
 
 # Add custom styles for background
 st.markdown(
