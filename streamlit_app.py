@@ -117,7 +117,7 @@ with col2:
     st.metric(label="Electricity Price (€/kWh) for December 8th 2024", value=f"{price_8} €")
 
 # Display current temperature, today's electricity price, and time
-st.sidebar.image("Logo.png", use_column_width=True)  # Add your logo here
+st.sidebar.image("Logo.png", width=150)  # Add your logo here
 st.sidebar.header("Today's Info")
 st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
 st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real temperature if available
