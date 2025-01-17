@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from api_connection import get_data_from_api
 import matplotlib.pyplot as plt
 import pandas as pd
+import requests
 
 # Streamlit app configuration
 st.set_page_config(layout="wide", page_title="ThermoScope")
@@ -52,18 +53,26 @@ def fetch_hourly_temperature(date, location="Barcelona"):
 def fetch_electricity_price(date):
     url = "https://api.esios.ree.es/indicators/1001"
     headers = {
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "User-Agent": "ThermoScope/1.0"
     }
     params = {
         "start_date": f"{date}T00:00:00",
         "end_date": f"{date}T23:59:59"
     }
-    data = get_data_from_api(url, headers=headers, params=params)
-    if "included" in data and len(data["included"]) > 0:
-        # Extract the final consumer price in €/MWh and convert to €/kWh
-        pvpc = data["included"][0]["attributes"]["values"][0]["value"] / 1000  # Convert €/MWh to €/kWh
-        return round(pvpc, 4)  # Round to 4 decimal places for clarity
-    return "N/A"
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
+        if "included" in data and len(data["included"]) > 0:
+            # Extract the final consumer price in €/MWh and convert to €/kWh
+            pvpc = data["included"][0]["attributes"]["values"][0]["value"] / 1000  # Convert €/MWh to €/kWh
+            return round(pvpc, 4)  # Round to 4 decimal places for clarity
+        return "N/A"
+    except requests.exceptions.RequestException as e:
+        st.error(f"API request failed: {e}")
+        st.error(f"Response: {response.text}")
+        return "N/A"
 
 st.title("ThermoScope")
 
@@ -124,7 +133,6 @@ try:
 
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
-
 
 
 
