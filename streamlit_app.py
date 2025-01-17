@@ -127,6 +127,7 @@ st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_pr
 st.sidebar.metric(label="Time", value=today_time)
 
 # Static data for plotting
+voltage = 220  # Assumed voltage in volts
 data = {
     "2024-12-07": [
         ("6:25:00", 17.00, 0.00, "OFF"), ("6:25:45", 17.16, 0.00, "OFF"), ("6:26:30", 16.59, 0.00, "OFF"),
@@ -167,11 +168,17 @@ hourly_temp_8 = data["2024-12-08"]
 df_7 = pd.DataFrame(hourly_temp_7, columns=["Time", "Temperature", "Current", "Heater State"])
 df_8 = pd.DataFrame(hourly_temp_8, columns=["Time", "Temperature", "Current", "Heater State"])
 
+# Calculate power and consumption in kWh
+df_7["Power (W)"] = df_7["Current"] * voltage
+df_7["Consumption (kWh)"] = df_7["Power (W)"] * (45 / 3600) / 1000  # 45 seconds converted to hours
+df_8["Power (W)"] = df_8["Current"] * voltage
+df_8["Consumption (kWh)"] = df_8["Power (W)"] * (45 / 3600) / 1000
+
 # Create two side-by-side columns for the temperature and current plots
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("December 7th 2024 - Turning ON/OFF manually")
+    st.header("7th December 2024")
     fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -191,8 +198,12 @@ with col1:
     ax_7.set_xticklabels(df_7["Time"].iloc[::5], rotation=45)  # Better x-axis labels
     st.pyplot(fig_7)
 
+    # Display total consumption
+    total_consumption_7 = df_7["Consumption (kWh)"].sum()
+    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_7:.2f}")
+
 with col2:
-    st.header("8th December 2024 - Turning ON/OFF manually")
+    st.header("8th December 2024")
     fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -212,7 +223,9 @@ with col2:
     ax_8.set_xticklabels(df_8["Time"].iloc[::5], rotation=45)  # Better x-axis labels
     st.pyplot(fig_8)
 
-
+    # Display total consumption
+    total_consumption_8 = df_8["Consumption (kWh)"].sum()
+    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_8:.2f}")
 
 
 
@@ -297,18 +310,7 @@ with col2:
     ax_10.set_xticks(range(0, len(df_10["Hour"]), 2))  # Add spacing to the x-axis ticks
     ax_10.set_xticklabels(df_10["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
     st.pyplot(fig_10)
-    voltage = 220  # Assumed voltage in volts
-    # Calculate power and consumption in kWh
-df_7["Power (W)"] = df_7["Current"] * voltage
-df_7["Consumption (kWh)"] = df_7["Power (W)"] * (45 / 3600) / 1000  # 45 seconds converted to hours
-df_8["Power (W)"] = df_8["Current"] * voltage
-df_8["Consumption (kWh)"] = df_8["Power (W)"] * (45 / 3600) / 1000
-# Display total consumption
-    total_consumption_7 = df_7["Consumption (kWh)"].sum()
-    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_7:.2f}")
-# Display total consumption
-    total_consumption_8 = df_8["Consumption (kWh)"].sum()
-    st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_8:.2f}")
+  
 
 
 
