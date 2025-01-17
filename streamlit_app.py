@@ -117,5 +117,37 @@ st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real t
 st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
 st.sidebar.metric(label="Time", value=today_time)
 
+# Load data from the repository
+url = 'https://raw.githubusercontent.com/SalvadorRM21/streamlit_test/Heater_Data_vi/DATA%20FOR%20AUTO%20OPERATION%20HEATER.csv'
+data = pd.read_csv(url)
+
+# Assuming the data has columns: 'Time', 'Temperature', 'Current'
+# Parse the Time column if it's not already in datetime format
+data['Time'] = pd.to_datetime(data['Time'], format='%H:%M:%S')
+
+# Create a plot for Temperature and Current vs Time
+st.header("Temperature and Current vs Time")
+fig, ax1 = plt.subplots(figsize=(10, 5))
+
+# Plot Temperature
+ax1.plot(data['Time'], data['Temperature'], label="Temperature", color="blue", marker="o")
+ax1.set_xlabel("Time")
+ax1.set_ylabel("Temperature (°C)", color="blue")
+ax1.tick_params(axis='y', labelcolor="blue")
+
+# Create a second y-axis for Current
+ax2 = ax1.twinx()
+ax2.plot(data['Time'], data['Current'], label="Current", color="orange", marker="x")
+ax2.set_ylabel("Current (A)", color="orange")
+ax2.tick_params(axis='y', labelcolor="orange")
+
+# Customize the plot
+plt.title("Temperature and Current vs Time")
+fig.tight_layout()
+plt.grid(True)
+
+# Display the plot in Streamlit
+st.pyplot(fig)
+
 
 
