@@ -24,8 +24,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-
 # Function to fetch hourly temperature (using provided static data for 7th and 8th December 2024)
 def fetch_hourly_temperature(date, station_id="0076"):
     # Static data for 7th and 8th December 2024
@@ -132,70 +130,6 @@ try:
 
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
-
-# Static data for 7th and 8th December 2024
-data = {
-    "07/12/2024": [
-        ("6:25:00", 17.00, 0.00, "OFF"), ("6:25:45", 17.16, 0.00, "OFF"), ("6:26:30", 16.59, 0.00, "OFF"),
-        ("6:27:15", 17.08, 5.58, "ON"), ("6:28:00", 17.16, 5.53, "ON"), ("6:28:45", 17.08, 5.50, "ON"),
-        ("6:29:30", 17.16, 5.54, "ON"), ("6:30:15", 16.91, 5.49, "ON"), ("6:31:00", 17.48, 5.49, "ON"),
-        ("6:31:45", 18.20, 5.46, "ON"), ("6:32:30", 17.88, 5.45, "ON"), ("6:33:15", 17.64, 5.46, "ON")
-    ],
-    "08/12/2024": [
-        ("6:25:45", 16.59, 0.00, "OFF"), ("6:26:30", 16.27, 5.66, "ON"), ("6:27:15", 16.19, 5.58, "ON"),
-        ("6:28:00", 15.95, 5.54, "ON"), ("6:28:45", 16.03, 5.52, "ON"), ("6:29:30", 15.87, 5.51, "ON"),
-        ("6:30:15", 15.95, 5.50, "ON"), ("6:31:00", 16.27, 5.49, "ON"), ("6:31:45", 16.43, 5.49, "ON"),
-        ("6:32:30", 16.43, 5.49, "ON"), ("6:33:15", 16.59, 5.47, "ON"), ("6:34:00", 16.43, 5.46, "ON")
-    ]
-}
-
-# Transform data into DataFrame for processing
-columns = ["Time", "Temperature", "Current", "Heater State"]
-data_7th = pd.DataFrame(data["07/12/2024"], columns=columns)
-data_8th = pd.DataFrame(data["08/12/2024"], columns=columns)
-
-# Parse time for plotting
-for df in [data_7th, data_8th]:
-    df["Datetime"] = pd.to_datetime("2024-12-07 " + df["Time"])
-
-# Streamlit app
-st.title("Heater Regulation Data Visualization")
-
-# Plot data for each day
-st.header("Temperature and Current vs. Time")
-
-# 7th December
-st.subheader("7th December 2024")
-fig1, ax1 = plt.subplots()
-ax1.plot(data_7th['Datetime'], data_7th['Temperature'], label='Temperature (°C)', color='blue')
-ax1.set_ylabel('Temperature (°C)', color='blue')
-ax1.tick_params(axis='y', labelcolor='blue')
-
-ax2 = ax1.twinx()
-ax2.plot(data_7th['Datetime'], data_7th['Current'], label='Current (A)', color='orange')
-ax2.set_ylabel('Current (A)', color='orange')
-ax2.tick_params(axis='y', labelcolor='orange')
-
-ax1.set_xlabel('Time')
-plt.title('7th December 2024: Temperature and Current')
-st.pyplot(fig1)
-
-# 8th December
-st.subheader("8th December 2024")
-fig2, ax3 = plt.subplots()
-ax3.plot(data_8th['Datetime'], data_8th['Temperature'], label='Temperature (°C)', color='blue')
-ax3.set_ylabel('Temperature (°C)', color='blue')
-ax3.tick_params(axis='y', labelcolor='blue')
-
-ax4 = ax3.twinx()
-ax4.plot(data_8th['Datetime'], data_8th['Current'], label='Current (A)', color='orange')
-ax4.set_ylabel('Current (A)', color='orange')
-ax4.tick_params(axis='y', labelcolor='orange')
-
-ax3.set_xlabel('Time')
-plt.title('8th December 2024: Temperature and Current')
-st.pyplot(fig2)
-
 
 
 
