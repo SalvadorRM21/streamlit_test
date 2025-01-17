@@ -120,11 +120,10 @@ st.sidebar.metric(label="Time", value=today_time)
 # Add plot to the existing Streamlit app
 # Assuming you have data for Series1 and Series2
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import streamlit as st
+
 
 # Static data for plotting
+# Ensuring all arrays are of the same length to avoid errors
 data = {
     "Date": [
         "07/12/2024", "07/12/2024", "07/12/2024", "07/12/2024", "07/12/2024", "07/12/2024",
@@ -199,5 +198,6 @@ plt.grid(True)
 
 # Display the plot in Streamlit
 st.pyplot(fig)
+
 
 
