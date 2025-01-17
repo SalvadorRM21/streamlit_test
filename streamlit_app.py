@@ -169,7 +169,7 @@ df_8 = pd.DataFrame(hourly_temp_8, columns=["Time", "Temperature", "Current", "H
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("7th December 2024")
+    st.header("December 7th 2024 - Turning ON/OFF manually")
     fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -190,7 +190,7 @@ with col1:
     st.pyplot(fig_7)
 
 with col2:
-    st.header("8th December 2024")
+    st.header("8th December 2024 - Turning ON/OFF manually")
     fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
