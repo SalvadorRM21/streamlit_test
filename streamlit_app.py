@@ -124,6 +124,96 @@ st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real t
 st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
 st.sidebar.metric(label="Time", value=today_time)
 
+# Static data for plotting
+data = {
+    "2024-12-07": [
+        ("6:25:00", 17.00, 0.00, "OFF"), ("6:25:45", 17.16, 0.00, "OFF"), ("6:26:30", 16.59, 0.00, "OFF"),
+        ("6:27:15", 17.08, 5.58, "ON"), ("6:28:00", 17.16, 5.53, "ON"), ("6:28:45", 17.08, 5.50, "ON"),
+        ("6:29:30", 17.16, 5.54, "ON"), ("6:30:15", 16.91, 5.49, "ON"), ("6:31:00", 17.48, 5.49, "ON"),
+        ("6:31:45", 18.20, 5.46, "ON"), ("6:32:30", 17.88, 5.45, "ON"), ("6:33:15", 17.64, 5.46, "ON"),
+        ("6:34:00", 17.56, 5.45, "ON"), ("6:34:45", 17.96, 5.46, "ON"), ("6:35:30", 18.20, 5.44, "ON"),
+        ("6:36:15", 18.04, 5.43, "ON"), ("6:37:00", 18.04, 5.41, "ON"), ("6:37:45", 18.20, 5.43, "ON"),
+        ("6:38:30", 17.96, 5.42, "ON"), ("6:39:15", 17.96, 5.41, "ON"), ("6:40:00", 18.45, 5.40, "ON"),
+        ("6:40:45", 18.45, 5.40, "ON"), ("6:41:30", 18.45, 5.40, "ON"), ("6:42:15", 18.45, 5.39, "ON"),
+        ("6:43:00", 19.01, 5.38, "ON"), ("6:43:45", 18.69, 5.38, "ON"), ("6:44:30", 19.25, 5.37, "ON"),
+        ("6:45:15", 19.33, 5.37, "ON"), ("6:46:00", 19.49, 5.38, "ON"), ("6:46:45", 19.17, 5.38, "ON"),
+        ("6:47:30", 19.81, 5.36, "ON"), ("6:48:15", 19.33, 5.37, "ON"), ("6:49:00", 19.41, 5.37, "ON"),
+        ("6:49:45", 19.73, 5.37, "ON"), ("6:50:30", 19.65, 5.37, "ON"), ("6:51:15", 19.65, 5.36, "ON"),
+        ("6:52:00", 19.65, 5.36, "ON"), ("6:52:45", 19.57, 5.37, "ON"), ("6:53:30", 20.22, 5.36, "ON"),
+        ("6:54:15", 19.81, 5.35, "ON"), ("6:55:00", 19.90, 5.35, "ON"), ("6:55:45", 20.38, 5.36, "ON"),
+        ("6:56:30", 19.98, 5.35, "ON"), ("6:57:15", 19.98, 5.35, "ON"), ("6:58:00", 20.78, 5.34, "ON"),
+        ("6:58:45", 19.90, 5.35, "ON"), ("6:59:30", 20.62, 5.36, "ON"), ("7:00:15", 20.22, 5.37, "ON")
+    ],
+    "2024-12-08": [
+        ("6:25:45", 16.59, 0.00, "OFF"), ("6:26:30", 16.27, 5.66, "ON"), ("6:27:15", 16.19, 5.58, "ON"),
+        ("6:28:00", 15.95, 5.54, "ON"), ("6:28:45", 16.03, 5.52, "ON"), ("6:29:30", 15.87, 5.51, "ON"),
+        ("6:30:15", 15.95, 5.50, "ON"), ("6:31:00", 16.27, 5.49, "ON"), ("6:31:45", 16.43, 5.49, "ON"),
+        ("6:32:30", 16.43, 5.49, "ON"), ("6:33:15", 16.59, 5.47, "ON"), ("6:34:00", 16.43, 5.46, "ON"),
+        ("6:34:45", 17.16, 5.48, "ON"), ("6:35:30", 16.59, 5.46, "ON"), ("6:36:15", 16.75, 5.45, "ON"),
+        ("6:37:00", 16.59, 5.43, "ON"), ("6:37:45", 16.91, 5.45, "ON"), ("6:38:30", 17.16, 5.44, "ON"),
+        ("6:39:15", 16.43, 5.45, "ON"), ("6:40:00", 16.91, 5.44, "ON"), ("6:40:45", 16.67, 5.43, "ON"),
+        ("6:41:30", 17.24, 5.42, "ON"), ("6:42:15", 16.75, 5.41, "ON"), ("6:43:00", 17.16, 5.43, "ON"),
+        ("6:43:45", 17.72, 5.42, "ON"), ("6:44:30", 17.32, 5.43, "ON"), ("6:45:15", 17.08, 5.42, "ON"),
+        ("6:46:00", 17.24, 5.40, "ON"), ("6:46:45", 17.16, 5.41, "ON"), ("6:47:30", 17.16, 5.43, "ON")
+    ]
+}
+
+# Prepare data for plotting
+hourly_temp_7 = data["2024-12-07"]
+hourly_temp_8 = data["2024-12-08"]
+
+df_7 = pd.DataFrame(hourly_temp_7, columns=["Time", "Temperature", "Current", "Heater State"])
+df_8 = pd.DataFrame(hourly_temp_8, columns=["Time", "Temperature", "Current", "Heater State"])
+
+# Create two side-by-side columns for the temperature and current plots
+col1, col2 = st.columns(2)
+
+with col1:
+    st.header("7th December 2024")
+    fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
+    fig_7.patch.set_facecolor('none')  # Transparent background for the figure
+    ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+    ax_7.plot(df_7["Time"], df_7["Temperature"], label="Temperature", color="blue")
+    ax_7.set_xlabel("Time")
+    ax_7.set_ylabel("Temperature (°C)", color="blue")
+    ax_7.tick_params(axis='y', labelcolor="blue")
+
+    # Add current to the same plot with a secondary axis
+    ax7_current = ax_7.twinx()
+    ax7_current.plot(df_7["Time"], df_7["Current"], label="Current", color="orange")
+    ax7_current.set_ylabel("Current (A)", color="orange")
+    ax7_current.tick_params(axis='y', labelcolor="orange")
+
+    ax_7.set_title("Room Temperature and Current")
+    ax_7.set_xticks(range(0, len(df_7["Time"]), 5))  # Add spacing to the x-axis ticks
+    ax_7.set_xticklabels(df_7["Time"].iloc[::5], rotation=45)  # Better x-axis labels
+    st.pyplot(fig_7)
+
+with col2:
+    st.header("8th December 2024")
+    fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
+    fig_8.patch.set_facecolor('none')  # Transparent background for the figure
+    ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+    ax_8.plot(df_8["Time"], df_8["Temperature"], label="Temperature", color="blue")
+    ax_8.set_xlabel("Time")
+    ax_8.set_ylabel("Temperature (°C)", color="blue")
+    ax_8.tick_params(axis='y', labelcolor="blue")
+
+    # Add current to the same plot with a secondary axis
+    ax8_current = ax_8.twinx()
+    ax8_current.plot(df_8["Time"], df_8["Current"], label="Current", color="orange")
+    ax8_current.set_ylabel("Current (A)", color="orange")
+    ax8_current.tick_params(axis='y', labelcolor="orange")
+
+    ax_8.set_title("Room Temperature and Current")
+    ax_8.set_xticks(range(0, len(df_8["Time"]), 5))  # Add spacing to the x-axis ticks
+    ax_8.set_xticklabels(df_8["Time"].iloc[::5], rotation=45)  # Better x-axis labels
+    st.pyplot(fig_8)
+
+
+
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
