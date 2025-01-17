@@ -46,10 +46,6 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error fetching electricity price data: {e}")
 
-a1, a2, a3 = st.columns(3)
-a1.image(Image.open('HEATER LOGO.png'))
-a2.metric("Wind", "9 mph", "-8%")
-a3.metric("Humidity", "86%", "4%")
 
 
 
