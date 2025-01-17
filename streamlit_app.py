@@ -75,29 +75,6 @@ def fetch_electricity_price(date):
         return round(pvpc, 4)
     return "N/A"
 
-# Load Excel data
-def load_excel_data(file_path):
-    return pd.read_excel(file_path)
-
-# Plot temperature, state, and current
-def plot_temp_state_current(df, title):
-    fig, ax1 = plt.subplots(figsize=(6, 3))
-
-    ax1.set_title(title)
-    ax1.set_xlabel("Time")
-    ax1.set_ylabel("Temperature (°C)", color="blue")
-    ax1.plot(df["Time"], df["Temperature"], color="blue", label="Temperature")
-    ax1.tick_params(axis="y", labelcolor="blue")
-
-    ax2 = ax1.twinx()
-    ax2.set_ylabel("State / Current", color="green")
-    ax2.plot(df["Time"], df["State"], color="green", linestyle="--", label="State")
-    ax2.plot(df["Time"], df["Current"], color="orange", label="Current")
-    ax2.tick_params(axis="y", labelcolor="green")
-
-    fig.tight_layout()
-    return fig
-
 st.title("ThermoScope")
 
 try:
@@ -119,14 +96,7 @@ try:
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
     df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
 
-    # Load and process data from Excel files
-    manual_file = "data/Befre algrtihme - Manual regulation.xlsx"
-    auto_file = "data/test with automatic heater regulation.xlsx"
-
-    manual_data = load_excel_data(manual_file)
-    auto_data = load_excel_data(auto_file)
-
-    # Create two side-by-side columns for the temperature plots
+    # Create two side-by-side columns for the plots
     col1, col2 = st.columns(2)
 
     with col1:
@@ -134,7 +104,7 @@ try:
         fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
         fig_7.patch.set_facecolor('none')  # Transparent background for the figure
         ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-        ax_7.plot(df_7["Hour"], df_7["Temperature of the room"], label="7th December", color="blue")
+        ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
         ax_7.set_xlabel("Hour")
         ax_7.set_ylabel("Temperature (°C)")
         ax_7.set_title("Hourly Temperatures")
@@ -147,30 +117,13 @@ try:
         fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
         fig_8.patch.set_facecolor('none')  # Transparent background for the figure
         ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-        ax_8.plot(df_8["Hour"], df_8["Temperature of the room"], label="8th December", color="orange")
+        ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
         ax_8.set_xlabel("Hour")
         ax_8.set_ylabel("Temperature (°C")
         ax_8.set_title("Hourly Temperatures")
         plt.xticks(rotation=45)
         st.pyplot(fig_8)
         st.metric(label="Electricity Price (€/kWh)", value=f"{price_8} €")
-
-    # Add a horizontal divider
-    st.markdown("---")
-    st.subheader("Room Temperature, State, and Current")
-
-    # Create two side-by-side columns for the new plots
-    col3, col4 = st.columns(2)
-
-    with col3:
-        st.header("Manual Regulation")
-        fig_manual = plot_temp_state_current(manual_data, "Manual Regulation")
-        st.pyplot(fig_manual)
-
-    with col4:
-        st.header("Automatic Regulation")
-        fig_auto = plot_temp_state_current(auto_data, "Automatic Regulation")
-        st.pyplot(fig_auto)
 
     # Display current temperature, today's electricity price, and time
     st.sidebar.header("Today's Info")
@@ -181,7 +134,6 @@ try:
 
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
-
 
 
 
