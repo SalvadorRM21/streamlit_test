@@ -144,6 +144,49 @@ try:
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
 
+# Load the cleaned datasets
+file_manual = "/mnt/data/Befre algrtihme - Manual regulation.xlsx"
+file_auto = "/mnt/data/test with automatic heater regulation.xlsx"
+data_manual = pd.read_excel(file_manual)
+data_auto = pd.read_excel(file_auto)
+
+# Cleaning the manual regulation data
+data_manual_cleaned = data_manual[["Day", "Time", "Temperature of the room", "Current", "HEATER STATE"]]
+data_manual_cleaned["Time"] = pd.to_datetime(data_manual_cleaned["Time"], format="%H:%M:%S").dt.time
+
+# Cleaning the automatic regulation data
+data_auto_cleaned = data_auto[["Day", "Time (min:sec)", "Temperature of the room", "Current", "Heater State"]]
+data_auto_cleaned.rename(columns={"Time (min:sec)": "Time"}, inplace=True)
+data_auto_cleaned["Time"] = pd.to_datetime(data_auto_cleaned["Time"], errors="coerce", format="%H:%M:%S").dt.time
+data_auto_cleaned["Time"].fillna(method="ffill", inplace=True)
+
+# Streamlit layout
+st.header("Comparison of Heater Regulation Modes")
+col3, col4 = st.columns(2)
+
+with col3:
+    st.subheader("Manual Heater Regulation")
+    fig_manual, ax_manual = plt.subplots(figsize=(6, 3))
+    ax_manual.plot(data_manual_cleaned["Time"], data_manual_cleaned["Temperature of the room"], label="Temperature", color="blue")
+    ax_manual.plot(data_manual_cleaned["Time"], data_manual_cleaned["Current"], label="Current", color="orange")
+    ax_manual.set_xlabel("Time")
+    ax_manual.set_ylabel("Temperature (°C) / Current (A)")
+    ax_manual.set_title("Manual Heater Regulation")
+    ax_manual.legend()
+    plt.xticks(rotation=45)
+    st.pyplot(fig_manual)
+
+with col4:
+    st.subheader("Automatic Heater Regulation")
+    fig_auto, ax_auto = plt.subplots(figsize=(6, 3))
+    ax_auto.plot(data_auto_cleaned["Time"], data_auto_cleaned["Temperature of the room"], label="Temperature", color="blue")
+    ax_auto.plot(data_auto_cleaned["Time"], data_auto_cleaned["Current"], label="Current", color="orange")
+    ax_auto.set_xlabel("Time")
+    ax_auto.set_ylabel("Temperature (°C) / Current (A)")
+    ax_auto.set_title("Automatic Heater Regulation")
+    ax_auto.legend()
+    plt.xticks(rotation=45)
+    st.pyplot(fig_auto)
 
 
 
