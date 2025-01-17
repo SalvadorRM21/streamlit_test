@@ -117,8 +117,6 @@ st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real t
 st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
 st.sidebar.metric(label="Time", value=today_time)
 
-# Add plot to the existing Streamlit app
-# Assuming you have data for Series1 and Series2
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -173,8 +171,9 @@ with col1:
     ax7_current.set_ylabel("Current (A)", color="orange")
     ax7_current.tick_params(axis='y', labelcolor="orange")
 
-    ax_7.set_title("Temperature and Current")
-    plt.xticks(rotation=45)
+    ax_7.set_title("Room Temperature and Current")
+    ax_7.set_xticks(range(0, len(df_7["Hour"]), 5))  # Add spacing to the x-axis ticks
+    ax_7.set_xticklabels(df_7["Hour"].iloc[::5], rotation=45)  # Better x-axis labels
     st.pyplot(fig_7)
 
 with col2:
@@ -193,8 +192,9 @@ with col2:
     ax8_current.set_ylabel("Current (A)", color="orange")
     ax8_current.tick_params(axis='y', labelcolor="orange")
 
-    ax_8.set_title("Temperature and Current")
-    plt.xticks(rotation=45)
+    ax_8.set_title("Room Temperature and Current")
+    ax_8.set_xticks(range(0, len(df_8["Hour"]), 5))  # Add spacing to the x-axis ticks
+    ax_8.set_xticklabels(df_8["Hour"].iloc[::5], rotation=45)  # Better x-axis labels
     st.pyplot(fig_8)
 
 
