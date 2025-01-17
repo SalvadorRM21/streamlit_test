@@ -1,23 +1,44 @@
-import streamlit as st
-from collections import namedtuple
-import math
+import requests
+import json
 import pandas as pd
 import numpy as np
-import plost                # this package is used to create plots/charts within streamlit
-from PIL import Image       # this package is used to put images within streamlit
 
-#from api_connection import get_data_from_api       # keep this commented if not using it otherwise brakes the app
+# Create GET request
+def get_data_from_api(url, headers=None, params=None):
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"API request failed with status code {response.status_code}: {response.text}")
 
-# Page setting
-st.set_page_config(layout="wide")
+if __name__ == "__main__":
+    # Ejemplo: Obtener temperatura desde WeatherAPI
+    url = "https://weatherapi-com.p.rapidapi.com/current.json"
+    headers = {
+        "X-RapidAPI-Key": "your_api_key",
+        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+    }
+    params = {"q": "Barcelona", "dt": "2022-12-08"}
 
-with open('style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    try:
+        weather_data = get_data_from_api(url, headers, params)
+        print(f"Weather Data: {weather_data}")
+    except Exception as e:
+        print(f"Error: {e}")
 
-# Data
-seattle_weather = pd.read_csv('https://raw.githubusercontent.com/tvst/plost/master/data/seattle-weather.csv', parse_dates=['date'])
-stocks = pd.read_csv('https://raw.githubusercontent.com/dataprofessor/data/master/stocks_toy.csv')
-# replace the previous data with your own streamed data from API
+    # Ejemplo: Obtener precio de electricidad desde REE API
+    url = "https://api.esios.ree.es/indicators/1001"
+    headers = {
+        "Authorization": "Token token=your_ree_api_token",
+        "Accept": "application/json; application/vnd.esios-api-v1+json"
+    }
+    params = {"start_date": "2022-12-08T00:00:00", "end_date": "2022-12-09T23:59:59"}
+
+    try:
+        electricity_price = get_data_from_api(url, headers, params)
+        print(f"Electricity Price Data: {electricity_price}")
+    except Exception as e:
+        print(f"Error: {e}")
 
 ### Here starts the web app design
 # Row A
@@ -33,23 +54,5 @@ b2.metric("Wind", "9 mph", "-8%")
 b3.metric("Humidity", "86%", "4%")
 b4.metric("Humidity", "86%", "4%")
 
-# Row C
-c1, c2 = st.columns((7,3))
-with c1:
-    st.markdown('### Heatmap')              # text is created with markdown
-    plost.time_hist(                        # histogram
-    data=seattle_weather,
-    date='date',
-    x_unit='week',
-    y_unit='day',
-    color='temp_max',
-    aggregate='median',
-    legend=None)
-with c2:
-    st.markdown('### Bar chart')
-    plost.donut_chart(                      # donut charts
-        data=stocks,
-        theta='q2',
-        color='company')
 
 
