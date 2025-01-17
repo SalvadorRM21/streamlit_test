@@ -4,6 +4,9 @@ from api_connection import get_data_from_api
 import matplotlib.pyplot as plt
 import pandas as pd
 
+# Streamlit app configuration
+st.set_page_config(layout="wide", page_title="Heater Dashboard")
+
 # Add custom styles for background
 st.markdown(
     """
@@ -41,8 +44,6 @@ def fetch_hourly_temperature(date, location="Barcelona"):
         return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]  # Extract only the hour
     return []
 
-# Streamlit app
-st.set_page_config(layout="wide")
 st.title("Heater Dashboard")
 
 try:
