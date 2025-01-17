@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timedelta
 from api_connection import get_data_from_api
 
 # Function to fetch current temperature
@@ -40,17 +40,19 @@ try:
     # Fetch current temperature
     temperature = fetch_current_temperature()
 
+    # Calculate yesterday's date
+    yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%dT00:00:00')
+
     # Fetch electricity prices for specific dates
     electricity_prices = fetch_electricity_price("2022-12-07T00:00:00", "2022-12-09T23:59:59")
-    today = datetime.now().strftime('%Y-%m-%dT00:00:00')
-    today_price = fetch_electricity_price(today, today)
+    yesterday_price = fetch_electricity_price(yesterday, yesterday)
 
     # Sidebar with today's info
     with st.sidebar:
         st.header("Today's Info")
         st.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
-        if today_price:
-            st.metric(label="Electricity Price (€/MWh)", value=f"{today_price[0][1]} €/MWh")
+        if yesterday_price:
+            st.metric(label="Electricity Price (€/MWh - Yesterday)", value=f"{yesterday_price[0][1]} €/MWh")
 
     # Display historical prices
     st.header("Electricity Prices (7-8 December 2022)")
@@ -62,6 +64,7 @@ try:
 
 except Exception as e:
     st.error(f"Error fetching data: {e}")
+
 
 
 
