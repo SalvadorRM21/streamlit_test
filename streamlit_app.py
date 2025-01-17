@@ -1,6 +1,5 @@
 import streamlit as st
 from datetime import datetime, timedelta
-from api_connection import get_data_from_api
 import matplotlib.pyplot as plt
 import pandas as pd
 import requests
@@ -32,7 +31,9 @@ def fetch_current_temperature(location="Barcelona"):
         "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
     }
     params = {"q": location}
-    data = get_data_from_api(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()
+    data = response.json()
     return data["current"]["temp_c"] if "current" in data else None
 
 # Function to fetch hourly temperature for a specific date
@@ -43,36 +44,35 @@ def fetch_hourly_temperature(date, location="Barcelona"):
         "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
     }
     params = {"q": location, "dt": date}
-    data = get_data_from_api(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()
+    data = response.json()
     if "forecast" in data and "forecastday" in data["forecast"]:
         hourly_data = data["forecast"]["forecastday"][0]["hour"]
-        return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]  # Extract only the hour
+        return [(hour["time"].split(" ")[1], hour["temp_c"]) for hour in hourly_data]
     return []
 
 # Function to fetch electricity price for a specific date from REE API
 def fetch_electricity_price(date):
-    url = "https://api.esios.ree.es/indicators/1001"
+    endpoint = 'https://apidatos.ree.es'
+    get_archives = '/en/datos/mercados/precios-mercados-tiempo-real'
     headers = {
-        "Accept": "application/json",
-        "User-Agent": "ThermoScope/1.0"
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Host': 'apidatos.ree.es'
     }
     params = {
-        "start_date": f"{date}T00:00:00",
-        "end_date": f"{date}T23:59:59"
+        'start_date': f'{date}T00:00',
+        'end_date': f'{date}T23:59',
+        'time_trunc': 'hour'
     }
-    try:
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        data = response.json()
-        if "included" in data and len(data["included"]) > 0:
-            # Extract the final consumer price in €/MWh and convert to €/kWh
-            pvpc = data["included"][0]["attributes"]["values"][0]["value"] / 1000  # Convert €/MWh to €/kWh
-            return round(pvpc, 4)  # Round to 4 decimal places for clarity
-        return "N/A"
-    except requests.exceptions.RequestException as e:
-        st.error(f"API request failed: {e}")
-        st.error(f"Response: {response.text}")
-        return "N/A"
+    response = requests.get(endpoint + get_archives, headers=headers, params=params)
+    response.raise_for_status()
+    data_json = response.json()
+    if "included" in data_json:
+        pvpc = data_json["included"][0]["attributes"]["values"][0]["value"] / 1000  # Convert €/MWh to €/kWh
+        return round(pvpc, 4)
+    return "N/A"
 
 st.title("ThermoScope")
 
