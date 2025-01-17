@@ -185,8 +185,7 @@ with col1:
 
 with col2:
     st.header("December 10th 2024 - Turning ON/OFF remotely")
-    fig_10, ax_10 = p
-    lt.subplots(figsize=(6, 3))  # Adjust height
+    fig_10, ax_10 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_10.patch.set_facecolor('none')  # Transparent background for the figure
     ax_10.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_10.plot(df_8["Hour"], df_10["Temperature"], label="Temperature", color="blue")
