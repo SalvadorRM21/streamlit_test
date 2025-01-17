@@ -45,33 +45,34 @@ try:
     df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
     df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
 
-    # Plot temperatures for 7th December
-    st.header("Hourly Temperatures for 7th December")
-    fig_7, ax_7 = plt.subplots()
-    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
-    ax_7.set_xlabel("Hour")
-    ax_7.set_ylabel("Temperature (°C)")
-    ax_7.set_title("Hourly Temperatures - 7th December")
-    plt.xticks(rotation=45)
-    st.pyplot(fig_7)
+    # Create two side-by-side columns for the plots
+    col1, col2 = st.columns(2)
 
-    # Plot temperatures for 8th December
-    st.header("Hourly Temperatures for 8th December")
-    fig_8, ax_8 = plt.subplots()
-    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
-    ax_8.set_xlabel("Hour")
-    ax_8.set_ylabel("Temperature (°C)")
-    ax_8.set_title("Hourly Temperatures - 8th December")
-    plt.xticks(rotation=45)
-    st.pyplot(fig_8)
+    with col1:
+        st.header("7th December")
+        fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
+        ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
+        ax_7.set_xlabel("Hour")
+        ax_7.set_ylabel("Temperature (°C)")
+        ax_7.set_title("Hourly Temperatures")
+        plt.xticks(rotation=45)
+        st.pyplot(fig_7)
+
+    with col2:
+        st.header("8th December")
+        fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
+        ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
+        ax_8.set_xlabel("Hour")
+        ax_8.set_ylabel("Temperature (°C)")
+        ax_8.set_title("Hourly Temperatures")
+        plt.xticks(rotation=45)
+        st.pyplot(fig_8)
 
     # Display current temperature
     st.sidebar.header("Today's Info")
     st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
 except Exception as e:
     st.sidebar.error(f"Error fetching data: {e}")
-
-
 
 
 
