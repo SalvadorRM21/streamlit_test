@@ -130,7 +130,7 @@ import streamlit as st
 
 # Static data for plotting
 data = {
-    "2024-12-07": [
+    "2024-12-09": [
         ("18:00", 17.2, 5.5), ("18:00:45", 17.6, 5.5), ("18:01:30", 18.1, 5.5), ("18:02:15", 18.5, 5.5),
         ("18:03:00", 18.9, 5.5), ("18:03:45", 19.3, 0), ("18:04:30", 19.5, 0), ("18:05:15", 19.4, 0),
         ("18:06:00", 19.2, 0), ("18:06:45", 18.9, 0), ("18:07:30", 18.5, 5.5), ("18:08:15", 18.9, 5.5),
@@ -140,7 +140,7 @@ data = {
         ("18:18:00", 18.9, 0), ("18:18:45", 18.5, 5.5), ("18:19:30", 18.9, 5.5), ("18:20:15", 19.3, 5.5),
         ("18:21:00", 19.5, 0)
     ],
-    "2024-12-08": [
+    "2024-12-10": [
         ("18:00", 18.0, 5.5), ("18:00:45", 18.4, 5.5), ("18:01:30", 18.8, 5.5), ("18:02:15", 19.2, 5.5),
         ("18:03:00", 19.5, 0), ("18:03:45", 19.6, 0), ("18:04:30", 19.3, 0), ("18:05:15", 19.0, 0),
         ("18:06:00", 18.7, 0), ("18:06:45", 18.5, 5.5), ("18:07:30", 18.9, 5.5), ("18:08:15", 19.4, 5.5),
@@ -163,7 +163,7 @@ df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature", "Current"])
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("December 7th 2024 - Turning ON/OFF remotely")
+    st.header("December 9th 2024 - Turning ON/OFF remotely")
     fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -184,7 +184,7 @@ with col1:
     st.pyplot(fig_7)
 
 with col2:
-    st.header("December 8th 2024 - Turning ON/OFF remotely")
+    st.header("December 10th 2024 - Turning ON/OFF remotely")
     fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
