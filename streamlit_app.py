@@ -164,45 +164,46 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("December 9th 2024 - Turning ON/OFF remotely")
-    fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_7.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="Temperature", color="blue")
-    ax_7.set_xlabel("Hour")
-    ax_7.set_ylabel("Temperature (°C)", color="blue")
-    ax_7.tick_params(axis='y', labelcolor="blue")
+    fig_9, ax_9 = plt.subplots(figsize=(6, 3))  # Adjust height
+    fig_9.patch.set_facecolor('none')  # Transparent background for the figure
+    ax_9.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+    ax_9.plot(df_9["Hour"], df_9["Temperature"], label="Temperature", color="blue")
+    ax_9.set_xlabel("Hour")
+    ax_9.set_ylabel("Temperature (°C)", color="blue")
+    ax_9.tick_params(axis='y', labelcolor="blue")
 
     # Add current to the same plot with a secondary axis
-    ax7_current = ax_7.twinx()
-    ax7_current.plot(df_7["Hour"], df_7["Current"], label="Current", color="orange")
-    ax7_current.set_ylabel("Current (A)", color="orange")
-    ax7_current.tick_params(axis='y', labelcolor="orange")
+    ax9_current = ax_9.twinx()
+    ax9_current.plot(df_9["Hour"], df_9["Current"], label="Current", color="orange")
+    ax9_current.set_ylabel("Current (A)", color="orange")
+    ax9_current.tick_params(axis='y', labelcolor="orange")
 
-    ax_7.set_title("Room Temperature and Current")
-    ax_7.set_xticks(range(0, len(df_7["Hour"]), 2))  # Add spacing to the x-axis ticks
-    ax_7.set_xticklabels(df_7["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
-    st.pyplot(fig_7)
+    ax_9.set_title("Room Temperature and Current")
+    ax_9.set_xticks(range(0, len(df_9["Hour"]), 2))  # Add spacing to the x-axis ticks
+    ax_9.set_xticklabels(df_9["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
+    st.pyplot(fig_9)
 
 with col2:
     st.header("December 10th 2024 - Turning ON/OFF remotely")
-    fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
-    fig_8.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="Temperature", color="blue")
-    ax_8.set_xlabel("Hour")
-    ax_8.set_ylabel("Temperature (°C)", color="blue")
-    ax_8.tick_params(axis='y', labelcolor="blue")
+    fig_10, ax_10 = p
+    lt.subplots(figsize=(6, 3))  # Adjust height
+    fig_10.patch.set_facecolor('none')  # Transparent background for the figure
+    ax_10.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+    ax_10.plot(df_8["Hour"], df_10["Temperature"], label="Temperature", color="blue")
+    ax_10.set_xlabel("Hour")
+    ax_10.set_ylabel("Temperature (°C)", color="blue")
+    ax_10.tick_params(axis='y', labelcolor="blue")
 
     # Add current to the same plot with a secondary axis
-    ax8_current = ax_8.twinx()
-    ax8_current.plot(df_8["Hour"], df_8["Current"], label="Current", color="orange")
-    ax8_current.set_ylabel("Current (A)", color="orange")
-    ax8_current.tick_params(axis='y', labelcolor="orange")
+    ax10_current = ax_10.twinx()
+    ax10_current.plot(df_10["Hour"], df_10["Current"], label="Current", color="orange")
+    ax10_current.set_ylabel("Current (A)", color="orange")
+    ax10_current.tick_params(axis='y', labelcolor="orange")
 
-    ax_8.set_title("Room Temperature and Current")
-    ax_8.set_xticks(range(0, len(df_8["Hour"]), 2))  # Add spacing to the x-axis ticks
-    ax_8.set_xticklabels(df_8["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
-    st.pyplot(fig_8)
+    ax_10.set_title("Room Temperature and Current")
+    ax_10.set_xticks(range(0, len(df_10["Hour"]), 2))  # Add spacing to the x-axis ticks
+    ax_10.set_xticklabels(df_10["Hour"].iloc[::2], rotation=45)  # Better x-axis labels
+    st.pyplot(fig_10)
 
 
 
