@@ -28,12 +28,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Centered title
-st.markdown(
-    """
-    <h1 style="text-align: center; color: white;">ThermoScope</h1>
-    """,
-    unsafe_allow_html=True
+
 )
 # Static data for 7th and 8th December 2024
 data = {
