@@ -27,20 +27,23 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-# Function to fetch current temperature
-def fetch_current_temperature(location="Barcelona"):
-    url = "https://weatherapi-com.p.rapidapi.com/current.json"
+# Function to fetch current temperature using Weather API from RapidAPI
+def fetch_current_temperature_rapidapi():
+    url = "https://weather-api167.p.rapidapi.com/api/weather/full_info"
+    querystring = {"place": "Barcelona,ES", "units": "metric"}
     headers = {
-        "X-RapidAPI-Key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82", 
-        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+        "x-rapidapi-host": "weather-api167.p.rapidapi.com",
+        "x-rapidapi-key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82"
     }
-    params = {"q": location}
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=querystring)
     response.raise_for_status()
     data = response.json()
-    return data["current"]["temp_c"] if "current" in data else None
+    if "current" in data and "temp" in data["current"]:
+        return data["current"]["temp"]  # Temperature in °C
+    return "N/A"
 
-
+# Fetch current temperature
+current_temperature = fetch_current_temperature_rapidapi()
 
 # Static data for 7th and 8th December 2024
 data = {
