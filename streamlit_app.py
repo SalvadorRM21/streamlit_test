@@ -324,4 +324,36 @@ with col2:
     total_consumption_10 = df_10["Consumption (kWh)"].sum()
     st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_10:.2f}")
 
+# Updated values for electricity price (€/kWh) and total consumption (kWh) for each date
+prices = [0.1389, 0.0836, 0.1142, 0.1613]  # Prices for each date
+consumptions = [0.67, 0.44, 0.21, 0.20]  # Total consumption for each date
+
+# Dates
+dates = ["2024-12-07", "2024-12-08", "2024-12-09", "2024-12-10"]
+
+# Calculate costs (€) for each date
+costs = [p * c for p, c in zip(prices, consumptions)]
+
+# Streamlit layout
+st.title("Energy Cost Analysis")
+st.header("Energy Cost for 7th to 10th December 2024")
+
+# Create bar chart using Matplotlib
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.bar(dates, costs, color='skyblue', edgecolor='black')
+ax.set_xlabel("Date")
+ax.set_ylabel("Energy Cost (€)")
+ax.set_title("Energy Cost for 7th to 10th December 2024")
+ax.set_xticks(range(len(dates)))
+ax.set_xticklabels(dates, rotation=45)
+
+# Display chart in Streamlit
+st.pyplot(fig)
+
+# Display costs in a table for better clarity
+st.subheader("Energy Cost Details")
+for date, price, consumption, cost in zip(dates, prices, consumptions, costs):
+    st.write(f"**{date}**: Price = {price} €/kWh, Consumption = {consumption} kWh, Cost = {cost:.2f} €")
+
+
 
