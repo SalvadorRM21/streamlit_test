@@ -27,23 +27,18 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-# Function to fetch current temperature using AEMET OpenData API
-def fetch_current_temperature_aemet(station_id="0076"):
-    url = f"https://opendata.aemet.es/opendata/api/observacion/convencional/datos/estacion/{station_id}"
-    headers = {"Authorization": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"}
-    response = requests.get(url, headers=headers)
+# Function to fetch current temperature
+def fetch_current_temperature(location="Barcelona"):
+    url = "https://weatherapi-com.p.rapidapi.com/current.json"
+    headers = {
+        "X-RapidAPI-Key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82", 
+        "X-RapidAPI-Host": "weatherapi-com.p.rapidapi.com"
+    }
+    params = {"q": location}
+    response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
     data = response.json()
-    if "datos" in data:
-        data_response = requests.get(data["datos"])
-        data_response.raise_for_status()
-        observations = data_response.json()
-        if observations:
-            return observations[0].get("ta", "N/A")  # "ta" is temperature in °C
-    return "N/A"
-
-# Fetch current temperature
-current_temperature = fetch_current_temperature_aemet()
+    return data["current"]["temp_c"] if "current" in data else None
 
 
 
@@ -376,9 +371,28 @@ consumption_group_2 = consumptions[2] + consumptions[3]  # Dec 9 + Dec 10
 
 # Calculate savings percentage
 savings_percentage = ((consumption_group_1 - consumption_group_2) / consumption_group_1) * 100 if consumption_group_1 > 0 else 0
+# Function to fetch current temperature using AEMET OpenData API
+def fetch_current_temperature_aemet(station_id="0076"):
+    url = f"https://opendata.aemet.es/opendata/api/observacion/convencional/datos/estacion/{station_id}"
+    headers = {"Authorization": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    data = response.json()
+    if "datos" in data:
+        data_response = requests.get(data["datos"])
+        data_response.raise_for_status()
+        observations = data_response.json()
+        if observations:
+            return observations[0].get("ta", "N/A")  # "ta" is temperature in °C
+    return "N/A"
+
+# Fetch current temperature
+current_temperature = fetch_current_temperature_aemet()
+# Add to sidebar
 # Add to sidebar
 # Add to sidebar
 st.sidebar.header("Summary")
+st.sidebar.metric(label="Current Temperature (°C)", value=f"{current_temperature}")
 st.sidebar.metric(label="Total Consumption (Dec 7 & Dec 8)", value=f"{consumption_group_1:.2f} kWh")
 st.sidebar.metric(label="Total Consumption (Dec 9 & Dec 10)", value=f"{consumption_group_2:.2f} kWh")
 st.sidebar.metric(label="Savings", value=f"{savings_percentage:.2f}%")
