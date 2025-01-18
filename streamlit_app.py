@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
-
+st.set_page_config(layout="wide")
 # Add custom styles for background
 # Add custom styles for background and overall design
 st.markdown(
