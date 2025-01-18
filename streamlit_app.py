@@ -359,10 +359,11 @@ consumption_group_2 = consumptions[2] + consumptions[3]  # Dec 9 + Dec 10
 # Calculate savings percentage
 savings_percentage = ((consumption_group_1 - consumption_group_2) / consumption_group_1) * 100 if consumption_group_1 > 0 else 0
 # Add to sidebar
+# Add to sidebar
 st.sidebar.header("Summary")
-st.sidebar.write(f"Total Consumption (Dec 7 & Dec 8): {consumption_group_1:.2f} kWh")
-st.sidebar.write(f"Total Consumption (Dec 9 & Dec 10): {consumption_group_2:.2f} kWh")
-st.sidebar.write(f"Savings: {savings_percentage:.2f}%")
+st.sidebar.metric(label="Total Consumption (Dec 7 & Dec 8)", value=f"{consumption_group_1:.2f} kWh")
+st.sidebar.metric(label="Total Consumption (Dec 9 & Dec 10)", value=f"{consumption_group_2:.2f} kWh")
+st.sidebar.metric(label="Savings", value=f"{savings_percentage:.2f}%")
 
 
 
