@@ -33,34 +33,28 @@ import json
 def fetch_current_temperature_aemet():
     url = "https://opendata.aemet.es/opendata/api/observacion/convencional/datos/estacion/0076/?api_key=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
     try:
-        # Step 1: Request data from the primary URL
+        # Request data from the URL
         response = requests.get(url)
         response.raise_for_status()
         
-        # Log and parse the primary JSON response
+        # Convert data to JSON format
         data = response.json()
-        if "datos" not in data:
-            return "Error: 'datos' key not found in primary response."
-        
-        # Step 2: Request data from the 'datos' URL
-        response_data = requests.get(data["datos"])
-        response_data.raise_for_status()
-        
-        # Log the secondary response content
-        print("Secondary response content:", response_data.text)
-        
-        # Parse secondary response as JSON
-        temperature_data = json.loads(response_data.text)
-        
-        # Step 3: Extract the latest temperature
-        if isinstance(temperature_data, list) and len(temperature_data) > 0:
-            latest_record = temperature_data[0]
-            if "ta" in latest_record:
-                return latest_record["ta"]  # Current temperature in °C
+
+        # Decode the secondary response as JSON if 'datos' key exists
+        if "datos" in data:
+            response_data = requests.get(data["datos"])
+            response_data.raise_for_status()
+            temperature_data = json.loads(response_data.text)
+
+            # Find the latest record based on the 'fint' timestamp
+            if isinstance(temperature_data, list) and len(temperature_data) > 0:
+                latest_record = max(temperature_data, key=lambda x: datetime.fromisoformat(x["fint"].replace("+0000", "")))
+                if "ta" in latest_record:
+                    return latest_record["ta"]  # Current temperature in °C
             else:
-                return "Error: 'ta' key not found in latest record."
+                return "No temperature data found in secondary response"
         else:
-            return "Error: No valid temperature data in secondary response."
+            return "Temperature not found in the data"
     except Exception as e:
         return f"Error fetching the temperature: {e}"
 
