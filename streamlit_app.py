@@ -94,7 +94,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("December 7th 2024")
-    fig_7, ax_7 = plt.subplots(figsize=(6, 2))  # Adjust height
+    fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
@@ -107,7 +107,7 @@ with col1:
 
 with col2:
     st.header("December 8th 2024")
-    fig_8, ax_8 = plt.subplots(figsize=(6, 2))  # Adjust height
+    fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
@@ -179,7 +179,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("7th December 2024")
-    fig_7, ax_7 = plt.subplots(figsize=(16, 8))  # Adjust height
+    fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_7.plot(df_7["Time"], df_7["Temperature"], label="Temperature", color="blue")
@@ -204,7 +204,7 @@ with col1:
 
 with col2:
     st.header("8th December 2024")
-    fig_8, ax_8 = plt.subplots(figsize=(16, 8))  # Adjust height
+    fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_8.plot(df_8["Time"], df_8["Temperature"], label="Temperature", color="blue")
@@ -276,7 +276,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("December 9th 2024 - Turning ON/OFF remotely")
-    fig_9, ax_9 = plt.subplots(figsize=(16, 8))  # Adjust height
+    fig_9, ax_9 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_9.patch.set_facecolor('none')  # Transparent background for the figure
     ax_9.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_9.plot(df_9["Hour"], df_9["Temperature"], label="Temperature", color="blue")
@@ -301,7 +301,7 @@ with col1:
 
 with col2:
     st.header("December 10th 2024 - Turning ON/OFF remotely")
-    fig_10, ax_10 = plt.subplots(figsize=(16, 8))  # Adjust height
+    fig_10, ax_10 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_10.patch.set_facecolor('none')  # Transparent background for the figure
     ax_10.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_10.plot(df_10["Hour"], df_10["Temperature"], label="Temperature", color="blue")
