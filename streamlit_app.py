@@ -383,22 +383,5 @@ st.sidebar.metric(label="Total Consumption (Dec 7 & Dec 8)", value=f"{consumptio
 st.sidebar.metric(label="Total Consumption (Dec 9 & Dec 10)", value=f"{consumption_group_2:.2f} kWh")
 st.sidebar.metric(label="Savings", value=f"{savings_percentage:.2f}%")
 
-# Function to fetch current temperature using AEMET OpenData API
-def fetch_current_temperature_aemet(station_id="0076"):
-    url = f"https://opendata.aemet.es/opendata/api/observacion/convencional/datos/estacion/{station_id}"
-    headers = {"Authorization": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"}
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    data = response.json()
-    if "datos" in data:
-        data_response = requests.get(data["datos"])
-        data_response.raise_for_status()
-        observations = data_response.json()
-        if observations:
-            return observations[0].get("ta", "N/A")  # "ta" is temperature in °C
-    return "N/A"
-
-# Fetch current temperature
-current_temperature = fetch_current_temperature_aemet()
 
 
