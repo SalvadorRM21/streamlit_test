@@ -440,7 +440,7 @@ st.markdown(
         font-family: 'Roboto', sans-serif; /* Default font */
     }
 
-    h2, h3, h4, h5, h6 {
+    h2, h3, h4, h5 {
         font-family: 'Montserrat', sans-serif; /* Heading font */
         font-weight: 600;
         color: #000000; /* Default heading color */
