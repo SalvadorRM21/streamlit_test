@@ -440,10 +440,10 @@ st.markdown(
         font-family: 'Roboto', sans-serif; /* Default font */
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h2, h3, h4, h5, h6 {
         font-family: 'Montserrat', sans-serif; /* Heading font */
         font-weight: 600;
-        color: #FF4500; /* Default heading color */
+        color: #000000; /* Default heading color */
     }
 
     .metric-container {
@@ -471,12 +471,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-# Add graph titles with the new class
-graph_title_1 = "<h2 class='graph-title'>December 7th 2024</h2>"
-graph_title_2 = "<h2 class='graph-title'>December 8th 2024</h2>"
 
-st.markdown(graph_title_1, unsafe_allow_html=True)
-st.markdown(graph_title_2, unsafe_allow_html=True)
 
 
 
