@@ -347,7 +347,7 @@ ax.set_xlabel("Date")
 ax.set_ylabel("Energy Cost (€)", color='white')
 ax.set_title("Energy Cost for 7th to 10th December 2024", color='white')
 ax.tick_params(colors='white')  # Set tick color to white
-plt.xticks(rotation=45)
+plt.xticks(rotation=30)
 
 # Display chart in Streamlit
 st.pyplot(fig)
