@@ -5,7 +5,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 
+# Full-width layout for the plots
 st.set_page_config(layout="wide")
+
+# Single-column layout to give more width
+st.markdown("<h1 style='text-align: center; color: white;'>ThermoScope</h1>", unsafe_allow_html=True)
+
+st.markdown("---")  # Add a separator for better spacing
 # Add custom styles for background
 # Add custom styles for background and overall design
 st.markdown(
