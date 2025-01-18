@@ -397,5 +397,29 @@ st.sidebar.metric(label="Total Consumption (Dec 7 & Dec 8)", value=f"{consumptio
 st.sidebar.metric(label="Total Consumption (Dec 9 & Dec 10)", value=f"{consumption_group_2:.2f} kWh")
 st.sidebar.metric(label="Savings", value=f"{savings_percentage:.2f}%")
 
+# Apply custom fonts for visual appeal in Streamlit
+import streamlit as st
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;600&display=swap');
+
+    html, body, [data-testid="stAppViewContainer"] {
+        font-family: 'Roboto', sans-serif; /* Default font */
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Montserrat', sans-serif; /* Heading font */
+        font-weight: 600;
+    }
+
+    .metric-container {
+        font-family: 'Roboto', sans-serif; /* Customize metric text */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 
 
