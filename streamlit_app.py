@@ -329,7 +329,7 @@ prices = [0.1389, 0.0836, 0.1142, 0.1613]  # Prices for each date
 consumptions = [0.67, 0.44, 0.21, 0.20]  # Total consumption for each date
 
 # Dates
-dates = ["2024-12-07", "2024-12-08", "2024-12-09", "2024-12-10"]
+dates = ["Dec 7", "Dec 8", "Dec 9", "Dec 10"]
 
 # Calculate costs (€) for each date
 costs = [p * c for p, c in zip(prices, consumptions)]
@@ -339,7 +339,7 @@ st.title("Energy Cost Analysis")
 st.header("Energy Cost for 7th to 10th December 2024")
 
 # Create bar chart using Matplotlib with matching theme
-fig, ax = plt.subplots(figsize=(3, 1))
+fig, ax = plt.subplots(figsize=(2, 1))
 fig.patch.set_facecolor('none')  # Transparent background for the figure
 ax.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
 ax.bar(dates, costs, color='#FF4500', edgecolor='black')  # Matching color theme
@@ -347,7 +347,7 @@ ax.set_xlabel("Date")
 ax.set_ylabel("Energy Cost (€)", color='white')
 ax.set_title("Energy Cost for 7th to 10th December 2024", color='white')
 ax.tick_params(colors='white')  # Set tick color to white
-plt.xticks(rotation=30)
+plt.xticks(rotation=45)
 
 # Display chart in Streamlit
 st.pyplot(fig)
