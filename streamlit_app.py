@@ -1,10 +1,3 @@
-import streamlit as st
-from datetime import datetime, timedelta, timezone
-import pytz
-import matplotlib.pyplot as plt
-import pandas as pd
-import requests
-
 # Full-width layout for the plots
 st.set_page_config(layout="wide")
 
@@ -12,117 +5,36 @@ st.set_page_config(layout="wide")
 st.markdown("<h1 style='text-align: center; color: white;'>ThermoScope</h1>", unsafe_allow_html=True)
 
 st.markdown("---")  # Add a separator for better spacing
-# Add custom styles for background
-# Add custom styles for background and overall design
-st.markdown(
-    """
-    <style>
-    [data-testid="stAppViewContainer"] {
-        background: linear-gradient(to bottom right, #FF4500, #1E90FF); /* Sunset gradient */
-        color: white; /* Ensure text is visible */
-    }
-    [data-testid="stSidebar"] {
-        background: rgba(0, 0, 0, 0.5); /* Transparent sidebar for better contrast */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
-# Centered title
-st.markdown(
-    """
-    <h1 style="text-align: center; color: white;">ThermoScope</h1>
-    """,
-    unsafe_allow_html=True
-)
-# Static data for 7th and 8th December 2024
-data = {
-    "2024-12-07": [
-        ("0:00", 13.44), ("1:00", 12.97), ("2:00", 12.75), ("4:00", 12.75),
-        ("5:00", 12.74), ("6:00", 13.23), ("7:00", 13.56), ("8:00", 13.6),
-        ("9:00", 13.85), ("10:00", 14.66), ("11:00", 15.32), ("12:00", 16.68),
-        ("13:00", 17.46), ("14:00", 18.09), ("15:00", 19.19), ("16:00", 18.04),
-        ("17:00", 16.52), ("18:00", 14.74), ("19:00", 13.3), ("20:00", 12.19),
-        ("21:00", 11.34), ("22:00", 10.45), ("23:00", 9.85)
-    ],
-    "2024-12-08": [
-        ("0:00", 9.24), ("1:00", 8.84), ("2:00", 8.37), ("3:00", 8.13),
-        ("4:00", 8.22), ("5:00", 7.86), ("6:00", 7.46), ("7:00", 7.45),
-        ("8:00", 7.66), ("9:00", 8.21), ("10:00", 9.24), ("11:00", 10.6),
-        ("12:00", 11.52), ("13:00", 12.33), ("14:00", 12.79), ("15:00", 12.63),
-        ("16:00", 12.4), ("17:00", 11.74), ("18:00", 11), ("19:00", 10.5),
-        ("20:00", 10.1), ("21:00", 9.27), ("22:00", 8.66), ("23:00", 8.37)
-    ]
-}
+# December 7th 2024 graph
+st.header("December 7th 2024")
+fig_7, ax_7 = plt.subplots(figsize=(16, 8))  # Wider and taller figure
+fig_7.patch.set_facecolor('none')  # Transparent figure background
+ax_7.set_facecolor((0, 0, 0, 0))  # Transparent axes background
+ax_7.plot(df_7["Hour"], df_7["Temperature"], label="Temperature", color="blue")
+ax_7.set_xlabel("Hour")
+ax_7.set_ylabel("Temperature (°C)")
+ax_7.set_title("Outside Temperature")
+plt.xticks(rotation=45)
+st.pyplot(fig_7, use_container_width=True)  # Expand graph width
 
-# Function to fetch electricity price for a specific date from REE API
-def fetch_electricity_price(date):
-    endpoint = 'https://apidatos.ree.es'
-    get_archives = '/en/datos/mercados/precios-mercados-tiempo-real'
-    headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Host': 'apidatos.ree.es'
-    }
-    params = {
-        'start_date': f'{date}T00:00',
-        'end_date': f'{date}T23:59',
-        'time_trunc': 'hour'
-    }
-    response = requests.get(endpoint + get_archives, headers=headers, params=params)
-    response.raise_for_status()
-    data_json = response.json()
-    if "included" in data_json:
-        pvpc = data_json["included"][0]["attributes"]["values"][0]["value"] / 1000  # Convert €/MWh to €/kWh
-        return round(pvpc, 4)
-    return "N/A"
+st.metric(label="Electricity Price (€/kWh) for December 7th 2024", value=f"{price_7} €")
 
+st.markdown("---")  # Separator between graphs
 
+# December 8th 2024 graph
+st.header("December 8th 2024")
+fig_8, ax_8 = plt.subplots(figsize=(16, 8))  # Wider and taller figure
+fig_8.patch.set_facecolor('none')  # Transparent figure background
+ax_8.set_facecolor((0, 0, 0, 0))  # Transparent axes background
+ax_8.plot(df_8["Hour"], df_8["Temperature"], label="Temperature", color="orange")
+ax_8.set_xlabel("Hour")
+ax_8.set_ylabel("Temperature (°C)")
+ax_8.set_title("Outside Temperature")
+plt.xticks(rotation=45)
+st.pyplot(fig_8, use_container_width=True)  # Expand graph width
 
-# Fetch electricity prices for 7th, 8th December, and today
-price_7 = fetch_electricity_price("2024-12-07")
-price_8 = fetch_electricity_price("2024-12-08")
-price_9 = fetch_electricity_price("2024-12-09")
-price_10 = fetch_electricity_price("2024-12-10")
-today_date = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%Y-%m-%d")
-today_price = fetch_electricity_price(today_date)
-today_time = datetime.now(pytz.timezone("Europe/Madrid")).strftime("%H:%M")
-
-# Prepare data for plotting
-hourly_temp_7 = data["2024-12-07"]
-hourly_temp_8 = data["2024-12-08"]
-df_7 = pd.DataFrame(hourly_temp_7, columns=["Hour", "Temperature"])
-df_8 = pd.DataFrame(hourly_temp_8, columns=["Hour", "Temperature"])
-
-# Create two side-by-side columns for the temperature plots
-col1, col2 = st.columns(2)
-
-with col1:
-    st.header("December 7th 2024")
-    fig_7, ax_7 = plt.subplots(figsize=(6, 2))  # Adjust height
-    fig_7.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
-    ax_7.set_xlabel("Hour")
-    ax_7.set_ylabel("Temperature (°C)")
-    ax_7.set_title("Outside Temperature")
-    plt.xticks(rotation=45)
-    st.pyplot(fig_7)
-    st.metric(label="Electricity Price (€/kWh) for December 7th 2024", value=f"{price_7} €")
-
-with col2:
-    st.header("December 8th 2024")
-    fig_8, ax_8 = plt.subplots(figsize=(6, 2))  # Adjust height
-    fig_8.patch.set_facecolor('none')  # Transparent background for the figure
-    ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
-    ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
-    ax_8.set_xlabel("Hour")
-    ax_8.set_ylabel("Temperature (°C)")
-    ax_8.set_title("Outside Temperature")
-    plt.xticks(rotation=45)
-    st.pyplot(fig_8)
-    st.metric(label="Electricity Price (€/kWh) for December 8th 2024", value=f"{price_8} €")
+st.metric(label="Electricity Price (€/kWh) for December 8th 2024", value=f"{price_8} €")
 
 
 
