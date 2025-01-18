@@ -258,8 +258,8 @@ data = {
 }
 
 # Prepare consumption data
-df_9 = pd.DataFrame(data_consumption["2024-12-09"], columns=["Hour", "Temperature", "Current"])
-df_10 = pd.DataFrame(data_consumption["2024-12-10"], columns=["Hour", "Temperature", "Current"])
+df_9 = pd.DataFrame(data["2024-12-09"], columns=["Hour", "Temperature", "Current"])
+df_10 = pd.DataFrame(data["2024-12-10"], columns=["Hour", "Temperature", "Current"])
 
 # Calculate power and consumption in kWh
 df_9["Power (W)"] = df_9["Current"] * voltage
