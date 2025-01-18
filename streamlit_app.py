@@ -27,24 +27,27 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-# Function to fetch current temperature using Weather API from RapidAPI
-def fetch_current_temperature_rapidapi():
-    url = "https://weather-api167.p.rapidapi.com/api/weather/full_info"
-    querystring = {"place": "Barcelona,ES", "units": "metric"}
-    headers = {
-        "x-rapidapi-host": "weather-api167.p.rapidapi.com",
-        "x-rapidapi-key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82"
-    }
+def fetch_current_temperature_aemet():
+    url = "https://opendata.aemet.es/opendata/sh/ef05b3ad"
     try:
-        response = requests.get(url, headers=headers, params=querystring)
+        # Request data from the URL
+        response = requests.get(url)
         response.raise_for_status()
+        
+        # Convert data to JSON format
         data = response.json()
-        if "current" in data and "temp" in data["current"]:
-            return data["current"]["temp"]  # Temperature in °C
-    except Exception as e:
-        st.error(f"Error fetching temperature: {e}")
-    return "N/A"
 
+        # Extract the current temperature
+        if "datos" in data:
+            response_data = requests.get(data["datos"])
+            response_data.raise_for_status()
+            temperature_data = response_data.json()
+            if "temperatura" in temperature_data:
+                return temperature_data["temperatura"]  # Depending on the exact JSON format
+        else:
+            return "Temperature not found in the data"
+    except Exception as e:
+        return f"Error fetching the temperature: {e}"
 
 # Fetch current temperature
 current_temperature = fetch_current_temperature_rapidapi()
