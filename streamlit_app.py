@@ -50,7 +50,7 @@ def fetch_current_temperature_aemet():
         return f"Error fetching the temperature: {e}"
 
 # Fetch current temperature
-current_temperature = fetch_current_temperature_rapidapi()
+current_temperature = fetch_current_temperature_aemet()
 
 # Static data for 7th and 8th December 2024
 data = {
