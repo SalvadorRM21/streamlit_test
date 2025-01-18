@@ -29,7 +29,7 @@ st.markdown(
 )
 
 
-)
+
 # Static data for 7th and 8th December 2024
 data = {
     "2024-12-07": [
