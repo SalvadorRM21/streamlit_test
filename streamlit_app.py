@@ -28,7 +28,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 def fetch_current_temperature_aemet():
-    url = "https://opendata.aemet.es/opendata/sh/ef05b3ad"
+    url = "https://opendata.aemet.es/opendata/api/observacion/convencional/datos/estacion/0076/?api_key=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
     try:
         # Request data from the URL
         response = requests.get(url)
@@ -37,19 +37,19 @@ def fetch_current_temperature_aemet():
         # Convert data to JSON format
         data = response.json()
 
-        # Extract the current temperature
+        # Decode the secondary response as JSON if 'datos' key exists
         if "datos" in data:
             response_data = requests.get(data["datos"])
             response_data.raise_for_status()
-            
-            # Decode the secondary response as JSON
             temperature_data = json.loads(response_data.text)
-            
+
             # Assume the first record contains the latest temperature
             if isinstance(temperature_data, list) and len(temperature_data) > 0:
                 latest_record = temperature_data[0]
                 if "ta" in latest_record:
                     return latest_record["ta"]  # Current temperature in °C
+            else:
+                return "No temperature data found in secondary response"
         else:
             return "Temperature not found in the data"
     except Exception as e:
