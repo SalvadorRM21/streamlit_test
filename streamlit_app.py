@@ -178,7 +178,7 @@ df_8["Consumption (kWh)"] = df_8["Power (W)"] * (45 / 3600) / 1000
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("7th December 2024")
+    st.header("7th December 2024 - Turning ON/OFF manually")
     fig_7, ax_7 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
@@ -203,7 +203,7 @@ with col1:
     st.metric(label="Total Consumption (kWh)", value=f"{total_consumption_7:.2f}")
 
 with col2:
-    st.header("8th December 2024")
+    st.header("8th December 2024 - Turning ON/OFF manually")
     fig_8, ax_8 = plt.subplots(figsize=(6, 3))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
