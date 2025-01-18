@@ -440,18 +440,22 @@ st.markdown(
         font-family: 'Roboto', sans-serif; /* Default font */
     }
 
-    h2, h3, h4, h5 {
+    h1, h2, h3, h4, h5, h6 {
         font-family: 'Montserrat', sans-serif; /* Heading font */
         font-weight: 600;
-        color: #000000; /* Default heading color */
+        color: black; /* Change all headers to black */
     }
 
     .metric-container {
         font-family: 'Roboto', sans-serif; /* Customize metric text */
     }
 
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2 {
+        color: #FF4500; /* Change sidebar headers to orange */
+    }
+
     [data-testid="stSidebar"] p, [data-testid="stSidebar"] span {
-        color: #1E90FF; /* Change sidebar paragraph and span text color to blue */
+        color: #1E90FF; /* Keep sidebar paragraph and span text color blue */
     }
 
     .custom-title {
