@@ -419,7 +419,7 @@ st.markdown(
     }
 
     p, span {
-        color: #1E90FF; /* Change paragraph and span text color */
+        color: black; /* Change paragraph and span text color to black */
     }
 
     .custom-title {
