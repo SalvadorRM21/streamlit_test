@@ -411,10 +411,15 @@ st.markdown(
     h1, h2, h3, h4, h5, h6 {
         font-family: 'Montserrat', sans-serif; /* Heading font */
         font-weight: 600;
+        color: #FF4500; /* Change heading color */
     }
 
     .metric-container {
         font-family: 'Roboto', sans-serif; /* Customize metric text */
+    }
+
+    p, span {
+        color: #1E90FF; /* Change paragraph and span text color */
     }
     </style>
     """,
