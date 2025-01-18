@@ -338,22 +338,23 @@ costs = [p * c for p, c in zip(prices, consumptions)]
 st.title("Energy Cost Analysis")
 st.header("Energy Cost for 7th to 10th December 2024")
 
-# Create bar chart using Matplotlib
-fig, ax = plt.subplots(figsize=(8, 5))
-ax.bar(dates, costs, color='skyblue', edgecolor='black')
+# Create bar chart using Matplotlib with matching theme
+fig, ax = plt.subplots(figsize=(6, 3))
+fig.patch.set_facecolor('none')  # Transparent background for the figure
+ax.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
+ax.bar(dates, costs, color='#FF4500', edgecolor='black')  # Matching color theme
 ax.set_xlabel("Date")
-ax.set_ylabel("Energy Cost (€)")
-ax.set_title("Energy Cost for 7th to 10th December 2024")
-ax.set_xticks(range(len(dates)))
-ax.set_xticklabels(dates, rotation=45)
+ax.set_ylabel("Energy Cost (€)", color='white')
+ax.set_title("Energy Cost for 7th to 10th December 2024", color='white')
+ax.tick_params(colors='white')  # Set tick color to white
+plt.xticks(rotation=45)
 
 # Display chart in Streamlit
 st.pyplot(fig)
 
 # Display costs in a table for better clarity
 st.subheader("Energy Cost Details")
-for date, price, consumption, cost in zip(dates, prices, consumptions, costs):
-    st.write(f"**{date}**: Price = {price} €/kWh, Consumption = {consumption} kWh, Cost = {cost:.2f} €")
-
+for date, consumption, cost in zip(dates, consumptions, costs):
+    st.write(f"**{date}**: Consumption = {consumption} kWh, Cost = {cost:.2f} €")
 
 
