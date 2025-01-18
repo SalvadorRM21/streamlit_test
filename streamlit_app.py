@@ -27,34 +27,42 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+import requests
+import json
+
 def fetch_current_temperature_aemet():
     url = "https://opendata.aemet.es/opendata/api/observacion/convencional/datos/estacion/0076/?api_key=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
     try:
-        # Request data from the URL
+        # Step 1: Request data from the primary URL
         response = requests.get(url)
         response.raise_for_status()
         
-        # Convert data to JSON format
+        # Log and parse the primary JSON response
         data = response.json()
-
-        # Decode the secondary response as JSON if 'datos' key exists
-        if "datos" in data:
-            response_data = requests.get(data["datos"])
-            response_data.raise_for_status()
-            temperature_data = json.loads(response_data.text)
-
-            # Assume the first record contains the latest temperature
-            if isinstance(temperature_data, list) and len(temperature_data) > 0:
-                latest_record = temperature_data[0]
-                if "ta" in latest_record:
-                    return latest_record["ta"]  # Current temperature in °C
+        if "datos" not in data:
+            return "Error: 'datos' key not found in primary response."
+        
+        # Step 2: Request data from the 'datos' URL
+        response_data = requests.get(data["datos"])
+        response_data.raise_for_status()
+        
+        # Log the secondary response content
+        print("Secondary response content:", response_data.text)
+        
+        # Parse secondary response as JSON
+        temperature_data = json.loads(response_data.text)
+        
+        # Step 3: Extract the latest temperature
+        if isinstance(temperature_data, list) and len(temperature_data) > 0:
+            latest_record = temperature_data[0]
+            if "ta" in latest_record:
+                return latest_record["ta"]  # Current temperature in °C
             else:
-                return "No temperature data found in secondary response"
+                return "Error: 'ta' key not found in latest record."
         else:
-            return "Temperature not found in the data"
+            return "Error: No valid temperature data in secondary response."
     except Exception as e:
         return f"Error fetching the temperature: {e}"
-
 
 
 # Fetch current temperature
