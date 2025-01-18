@@ -41,7 +41,9 @@ def fetch_current_temperature_aemet():
         if "datos" in data:
             response_data = requests.get(data["datos"])
             response_data.raise_for_status()
-            temperature_data = response_data.json()
+            
+            # Decode the secondary response as JSON
+            temperature_data = json.loads(response_data.text)
             
             # Assume the first record contains the latest temperature
             if isinstance(temperature_data, list) and len(temperature_data) > 0:
@@ -52,6 +54,7 @@ def fetch_current_temperature_aemet():
             return "Temperature not found in the data"
     except Exception as e:
         return f"Error fetching the temperature: {e}"
+
 
 
 # Fetch current temperature
