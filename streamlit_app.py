@@ -35,12 +35,16 @@ def fetch_current_temperature_rapidapi():
         "x-rapidapi-host": "weather-api167.p.rapidapi.com",
         "x-rapidapi-key": "9cd7ba775cmsha41eeb17ec7c48ap1a3d57jsnb01278a07b82"
     }
-    response = requests.get(url, headers=headers, params=querystring)
-    response.raise_for_status()
-    data = response.json()
-    if "current" in data and "temp" in data["current"]:
-        return data["current"]["temp"]  # Temperature in °C
+    try:
+        response = requests.get(url, headers=headers, params=querystring)
+        response.raise_for_status()
+        data = response.json()
+        if "current" in data and "temp" in data["current"]:
+            return data["current"]["temp"]  # Temperature in °C
+    except Exception as e:
+        st.error(f"Error fetching temperature: {e}")
     return "N/A"
+
 
 # Fetch current temperature
 current_temperature = fetch_current_temperature_rapidapi()
@@ -64,7 +68,8 @@ data = {
         ("20:00", 10.1), ("21:00", 9.27), ("22:00", 8.66), ("23:00", 8.37)
     ]
 }
-
+# Fetch current temperature
+temperature = fetch_current_temperature_rapidapi()
 # Function to fetch electricity price for a specific date from REE API
 def fetch_electricity_price(date):
     endpoint = 'https://apidatos.ree.es'
@@ -87,8 +92,6 @@ def fetch_electricity_price(date):
         return round(pvpc, 4)
     return "N/A"
 
- # Fetch current temperature
-    temperature = fetch_current_temperature_rapidapi()
 
 # Fetch electricity prices for 7th, 8th December, and today
 price_7 = fetch_electricity_price("2024-12-07")
