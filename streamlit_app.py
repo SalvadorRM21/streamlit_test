@@ -418,8 +418,8 @@ st.markdown(
         font-family: 'Roboto', sans-serif; /* Customize metric text */
     }
 
-    p, span {
-        color: black; /* Change paragraph and span text color to black */
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] span {
+        color: #1E90FF; /* Change sidebar paragraph and span text color to blue */
     }
 
     .custom-title {
