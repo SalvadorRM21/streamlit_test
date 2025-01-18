@@ -94,7 +94,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("December 7th 2024")
-    fig_7, ax_7 = plt.subplots(figsize=(16, 8))  # Adjust height
+    fig_7, ax_7 = plt.subplots(figsize=(6, 2))  # Adjust height
     fig_7.patch.set_facecolor('none')  # Transparent background for the figure
     ax_7.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_7.plot(df_7["Hour"], df_7["Temperature"], label="7th December", color="blue")
@@ -107,7 +107,7 @@ with col1:
 
 with col2:
     st.header("December 8th 2024")
-    fig_8, ax_8 = plt.subplots(figsize=(16, 8))  # Adjust height
+    fig_8, ax_8 = plt.subplots(figsize=(6, 2))  # Adjust height
     fig_8.patch.set_facecolor('none')  # Transparent background for the figure
     ax_8.set_facecolor((0, 0, 0, 0))  # Transparent background for the axes
     ax_8.plot(df_8["Hour"], df_8["Temperature"], label="8th December", color="orange")
