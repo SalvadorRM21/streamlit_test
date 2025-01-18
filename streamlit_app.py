@@ -138,7 +138,7 @@ with col2:
 st.sidebar.image("Logo.png", width=75)  # Add your logo here
 st.sidebar.header("Today's Info")
 st.sidebar.markdown("*Barcelona, Spain*", unsafe_allow_html=True)
-st.sidebar.metric(label="Temperature (°C)", value="N/A")  # Replace with real temperature if available
+st.sidebar.metric(label="Temperature (°C)", value=f"{temperature}°C" if temperature else "N/A")
 st.sidebar.metric(label="Today's Electricity Price (€/kWh)", value=f"{today_price} €")
 st.sidebar.metric(label="Time", value=today_time)
 
