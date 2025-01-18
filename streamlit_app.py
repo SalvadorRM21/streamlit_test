@@ -72,7 +72,7 @@ data = {
     ]
 }
 # Fetch current temperature
-temperature = fetch_current_temperature_rapidapi()
+temperature = fetch_current_temperature_aemet()
 # Function to fetch electricity price for a specific date from REE API
 def fetch_electricity_price(date):
     endpoint = 'https://apidatos.ree.es'
