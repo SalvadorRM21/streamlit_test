@@ -411,7 +411,7 @@ st.markdown(
     h1, h2, h3, h4, h5, h6 {
         font-family: 'Montserrat', sans-serif; /* Heading font */
         font-weight: 600;
-        color: #FF4500; /* Change heading color */
+        color: #FF4500; /* Default heading color */
     }
 
     .metric-container {
@@ -421,10 +421,15 @@ st.markdown(
     p, span {
         color: #1E90FF; /* Change paragraph and span text color */
     }
+
+    .custom-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        color: #32CD32; /* Change title color above the graphs */
+        text-align: center;
+    }
     </style>
     """,
     unsafe_allow_html=True
-)
-
 
 
