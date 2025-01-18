@@ -397,6 +397,38 @@ st.sidebar.metric(label="Total Consumption (Dec 7 & Dec 8)", value=f"{consumptio
 st.sidebar.metric(label="Total Consumption (Dec 9 & Dec 10)", value=f"{consumption_group_2:.2f} kWh")
 st.sidebar.metric(label="Savings", value=f"{savings_percentage:.2f}%")
 
+import requests
+import json
+from datetime import datetime
+
+def fetch_current_temperature_aemet():
+    url = "https://opendata.aemet.es/opendata/api/observacion/convencional/datos/estacion/0076/?api_key=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWx2YWRvcnJtMjEwN0BnbWFpbC5jb20iLCJqdGkiOiI3ZmZkNDMzZC1iMzM3LTQ1YjktOGNiMy0yNjZjMWM1ZTY1MmIiLCJpc3MiOiJBRU1FVCIsImlhdCI6MTczNzEzOTgxOCwidXNlcklkIjoiN2ZmZDQzM2QtYjMzNy00NWI5LThjYjMtMjY2YzFjNWU2NTJiIiwicm9sZSI6IiJ9.xzboGn3oPvjyr6tHmbm4LuVg3F7Baxo2lrfo-WssZTo"
+    try:
+        # Request data from the URL
+        response = requests.get(url)
+        response.raise_for_status()
+        
+        # Convert data to JSON format
+        data = response.json()
+
+        # Decode the secondary response as JSON if 'datos' key exists
+        if "datos" in data:
+            response_data = requests.get(data["datos"])
+            response_data.raise_for_status()
+            temperature_data = json.loads(response_data.text)
+
+            # Find the latest record based on the 'fint' timestamp
+            if isinstance(temperature_data, list) and len(temperature_data) > 0:
+                latest_record = max(temperature_data, key=lambda x: datetime.fromisoformat(x["fint"].replace("+0000", "")))
+                if "ta" in latest_record:
+                    return latest_record["ta"]  # Current temperature in °C
+            else:
+                return "No temperature data found in secondary response"
+        else:
+            return "Temperature not found in the data"
+    except Exception as e:
+        return f"Error fetching the temperature: {e}"
+
 # Apply custom fonts for visual appeal in Streamlit
 import streamlit as st
 st.markdown(
@@ -428,9 +460,19 @@ st.markdown(
         color: #32CD32; /* Change title color above the graphs */
         text-align: center;
     }
+
+    .graph-title {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        color: black; /* Change graph titles to black */
+        text-align: center;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
+
+
+
 
 
